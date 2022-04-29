@@ -1,7 +1,7 @@
 // Copyright 2022 Jose Andres Mena <jose.menaarias@ucr.ac.cr>
 
-#ifndef TETRIS_SOLVER_SERIAL_TETRIS_FIGURE_FACTORY_H_
-#define TETRIS_SOLVER_SERIAL_TETRIS_FIGURE_FACTORY_H_
+#ifndef ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_TETRIS_FIGURE_FACTORY_H_
+#define ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_TETRIS_FIGURE_FACTORY_H_
 
 typedef struct figure {
     int height;
@@ -28,4 +28,4 @@ int get_tetris_figure_num_rotations(char figure);
  */
 figure_t* get_tetris_figure(char figure, int num_rotations);
 
-#endif  // TETRIS_SOLVER_SERIAL_TETRIS_FIGURE_FACTORY_H_
+#endif  // ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_TETRIS_FIGURE_FACTORY_H_
