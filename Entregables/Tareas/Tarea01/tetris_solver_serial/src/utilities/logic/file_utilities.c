@@ -11,6 +11,8 @@ void get_input_data(char *filename, input_data_t *input_data)
 {
     // Adaptacion -> https://www.delftstack.com/es/howto/c/fscanf-line-by-line-in-c/
 
+    printf("Lectura del Archivo [%s]\n", filename);
+
     FILE *in_file = fopen(filename, "r");
 
     if (!in_file)
@@ -26,6 +28,8 @@ void get_input_data(char *filename, input_data_t *input_data)
         exit(EXIT_FAILURE);
     }
 
+    printf("Asignacion de valores iniciales\n");
+
     fscanf(in_file, "%zu", &input_data->identifier);
 
     fscanf(in_file, "%zu", &input_data->profundity);
@@ -34,11 +38,11 @@ void get_input_data(char *filename, input_data_t *input_data)
 
     fscanf(in_file, "%zu", &input_data->columns);
 
-    input_data->matriz = (char **)malloc((input_data->rows + 1) * sizeof(char *));
+    input_data->table = (char **)malloc((input_data->rows + 1) * sizeof(char *));
 
     for (size_t index = 0; index < input_data->rows; index++)
     {
-        input_data->matriz[index] = (char *)malloc((input_data->columns + 1) * sizeof(char));
+        input_data->table[index] = (char *)malloc((input_data->columns + 1) * sizeof(char));
     }
 
     for (size_t row = 0; row < input_data->rows; row++)
@@ -51,7 +55,7 @@ void get_input_data(char *filename, input_data_t *input_data)
             for (size_t column = 0; column < input_data->columns; column++)
             {
                 char item = temp[column];
-                input_data->matriz[row][column] = item;
+                input_data->table[row][column] = item;
             }
         }
         else
@@ -80,4 +84,6 @@ void get_input_data(char *filename, input_data_t *input_data)
     }
 
     fclose(in_file);
+
+    printf("Cerrar Fichero de Lectura Inicial\n");
 }

@@ -10,7 +10,7 @@ typedef struct input_data {
     size_t profundity;
     size_t rows;
     size_t columns;
-    char **matriz;
+    char **table;
     size_t number_of_figures;
     char *next_figures;
 } input_data_t;
