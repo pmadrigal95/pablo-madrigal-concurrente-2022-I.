@@ -15,4 +15,13 @@ typedef struct input_data {
     char *next_figures;
 } input_data_t;
 
+typedef struct output_data {
+    size_t identifier;
+    size_t figure;
+    size_t rotation;
+    size_t rows;
+    size_t columns;
+    char **table;
+} output_data_t;
+
 #endif  // ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_DATA_STRUCTURES_H_

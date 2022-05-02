@@ -104,6 +104,7 @@ for (size_t prof = 0; prof <= input_data->profundity; prof++) {
                 for (int k = 0; k < figure->height; k++) {
                     for (int l = 0; l < figure->width; l++) {
                         if (figure->value[k][l] != '0') {
+                            // https://www.delftstack.com/es/howto/c/convert-int-to-char/
                             int int_value = temp[i+k][j+l] - '0';
                             sum = sum + int_value;
                         }

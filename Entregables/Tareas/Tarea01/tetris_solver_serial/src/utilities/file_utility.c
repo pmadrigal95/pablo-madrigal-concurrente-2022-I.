@@ -14,6 +14,7 @@ void assign_incomming_array(FILE *in_file, input_data_t *input_data);
 void assign_initial_values(FILE *in_file, input_data_t *input_data);
 void **create_matrix(size_t row_count, size_t col_count, size_t element_size);
 void *create_array(size_t row_count, size_t element_size);
+void write_output_data(size_t profundity/*, output_data_t *output_data*/);
 
 void get_input_data(char *filename, input_data_t *input_data) {
     // Adaptacion -> https://www.delftstack.com/es/howto/c/fscanf-line-by-line-in-c/
@@ -31,6 +32,34 @@ void get_input_data(char *filename, input_data_t *input_data) {
     fclose(in_file);
 
     printf("Cerrar Fichero de Lectura Inicial\n");
+
+    write_output_data(1);
+}
+
+
+void write_output_data(size_t profundity/*, output_data_t *output_data*/) {
+// Adaptacion -> https://parzibyte.me/blog/2019/10/16/escribir-archivo-con-c-usando-fprintf/
+
+    char filename[] = "tetris_play_X.txt";
+    char charValue = profundity+'0';
+    int i = 0;
+
+    while (filename[i] != '\0') {
+        if (filename[i] == 'X') {
+            filename[i] = charValue;
+        }
+        i++;
+    }
+
+    char *filename_pt = filename;
+
+    FILE *in_file = fopen(filename, "wt");
+
+    fprintf(in_file, "Hola mundo, estamos escribiendo en un archivo\n");
+
+    fclose(in_file);
+
+    printf("Cerrar Fichero de Escritura [%s]\n", filename_pt);
 }
 
 
@@ -46,7 +75,6 @@ void validate_incomming_txt(FILE *in_file, char *filename) {
         exit(EXIT_FAILURE);
     }
 }
-
 
 void assign_initial_values(FILE *in_file, input_data_t *input_data) {
     fscanf(in_file, "%zu", &input_data->identifier);
