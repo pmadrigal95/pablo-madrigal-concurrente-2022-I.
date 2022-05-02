@@ -3,7 +3,7 @@
 #ifndef ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_LOGIC_FILE_UTILITIES_H_
 #define ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_LOGIC_FILE_UTILITIES_H_
 
-#include "../data/structures.h"
+#include "./data/structures.h"
 
 /**
  * @brief Get a input_data_t ptr to start the program

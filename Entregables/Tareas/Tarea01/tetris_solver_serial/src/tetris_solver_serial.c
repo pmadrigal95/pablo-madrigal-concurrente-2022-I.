@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "./utilities/data/structures.h"
-#include "./utilities/logic/file_utilities.h"
-#include "./utilities/logic/game_logic.h"
+#include "./utilities/file_utility.h"
+#include "./utilities/game_logic.h"
 
 void get_input_data(char *filename, input_data_t *input_data);
 void next_play(input_data_t* input_data);
