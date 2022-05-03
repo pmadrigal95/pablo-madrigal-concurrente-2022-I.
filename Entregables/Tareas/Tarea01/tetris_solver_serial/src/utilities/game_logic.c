@@ -3,6 +3,7 @@
 #include "game_logic.h"
 #include "tetris_figure_factory.h"
 #include "matrix_utility.h"
+#include "file_utility.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,6 +20,8 @@ char** clone_game_state(char** origin, char **destiny,
                         size_t row_count, size_t col_count);
 size_t get_play_score(char** table, size_t row_count, size_t col_count);
 void update_game_board(output_data_t *output_data, char** table);
+void generate_output_file(size_t profundity, output_data_t *output_data);
+void generate_game_board_txt(output_data_t *output_data, size_t profundity, char figure);
 
 
 void next_play(input_data_t *input_data) {
@@ -65,7 +68,7 @@ for (size_t prof = 0; prof <= input_data->profundity; prof++) {
                input_data->next_figures[prof], num_rotations);
 
         figure_t *figure =
-            get_tetris_figure(input_data->next_figures[prof], 1);
+            get_tetris_figure(input_data->next_figures[prof], 0);
 
         char **temp =
         set_game_state(output_data->table, input_data->rows,
@@ -170,6 +173,9 @@ for (size_t prof = 0; prof <= input_data->profundity; prof++) {
                 printf("\n");
             }
         }*/
+
+        generate_game_board_txt(output_data, prof,
+                                input_data->next_figures[prof]);
     }
 }
 
@@ -236,4 +242,10 @@ void update_game_board(output_data_t *output_data, char** table) {
             clone_game_state(table, output_data->table, output_data->rows,
                 output_data->columns);
     }
+}
+
+void generate_game_board_txt(output_data_t *output_data,
+        size_t profundity, char figure) {
+    sscanf(&figure, "%s", output_data->figure);
+    generate_output_file(profundity, output_data);
 }
