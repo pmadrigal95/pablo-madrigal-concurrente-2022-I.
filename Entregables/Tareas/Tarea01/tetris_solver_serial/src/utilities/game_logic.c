@@ -2,44 +2,42 @@
 
 #include "game_logic.h"
 #include "tetris_figure_factory.h"
+#include "matrix_utility.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 
-void initial_status(input_data_t *input_data);
-void calculate_next_figure(input_data_t *input_data);
+void initial_status(input_data_t *input_data, output_data_t *output_data);
+void calculate_next_figure(input_data_t *input_data,
+                            output_data_t *output_data);
 int get_tetris_figure_num_rotations(char figure);
 figure_t *get_tetris_figure(char figure, int num_rotations);
+void create_output_data(input_data_t *input_data, output_data_t *output_data);
+char** set_game_state(char** origin, size_t row_count, size_t col_count);
+char** clone_game_state(char** origin, char **destiny,
+                        size_t row_count, size_t col_count);
+size_t get_play_score(char** table, size_t row_count, size_t col_count);
+void update_game_board(output_data_t *output_data, char** table);
 
 
 void next_play(input_data_t *input_data) {
-    initial_status(input_data);
+    output_data_t *output_data = (output_data_t *)calloc(1,
+                                                sizeof(output_data_t));
+    initial_status(input_data, output_data);
 
-    calculate_next_figure(input_data);
+    calculate_next_figure(input_data, output_data);
 
-    /*printf("%zu\n", input_data->identifier);
-    printf("%zu\n", input_data->profundity);
+    free_matrix(input_data->rows, (void **)input_data->table);
+    free(input_data);
 
-    for (size_t x = 0; x < input_data->rows; x++)
-    {
-        for (size_t i = 0; i < input_data->columns; i++)
-        {
-            printf("%c", input_data->table[x][i]);
-        }
-        printf("\n");
-    }
-
-    printf("%zu\n", input_data->number_of_figures);
-
-    for (size_t j = 0; j < input_data->number_of_figures; j++)
-    {
-        printf("%c\n", input_data->next_figures[j]);
-    }*/
+    free_matrix(output_data->rows, (void **)output_data->table);
+    free(output_data);
 }
 
 
-void initial_status(input_data_t *input_data) {
+void initial_status(input_data_t *input_data, output_data_t *output_data) {
+    create_output_data(input_data, output_data);
     printf("Inicio de calculo de la partida [%zu]", input_data->identifier);
     printf(",Profundidad [%zu],", input_data->profundity);
     printf(" Tablero [%zu][%zu]\n", input_data->rows, input_data->columns);
@@ -55,32 +53,28 @@ void initial_status(input_data_t *input_data) {
     }
 }
 
-void calculate_next_figure(input_data_t *input_data) {
+void calculate_next_figure(input_data_t *input_data,
+    output_data_t *output_data) {
 for (size_t prof = 0; prof <= input_data->profundity; prof++) {
         printf("\nSiguiente Figura [%c]\n", input_data->next_figures[prof]);
 
         int num_rotations =
             get_tetris_figure_num_rotations(input_data->next_figures[prof]);
 
-        printf("Rotaciones de la Figura [%c] : [%d]\n\n",
+        printf("Rotaciones de la Figura [%c] : [%d]\n",
                input_data->next_figures[prof], num_rotations);
 
-        char temp[input_data->rows][input_data->columns];
-
-        for (size_t x = 0; x < input_data->rows; x++) {
-            for (size_t i = 0; i < input_data->columns; i++) {
-                sscanf(&input_data->table[x][i], "%c",
-                &temp[x][i]);
-            }
-        }
-
         figure_t *figure =
-                get_tetris_figure(input_data->next_figures[prof], 1);
+            get_tetris_figure(input_data->next_figures[prof], 1);
+
+        char **temp =
+        set_game_state(output_data->table, input_data->rows,
+                        input_data->columns);
 
             printf("Altura [%d], Ancho [%d]\n",
                figure->height, figure->width);
 
-        size_t col = 1;
+        size_t col = 0;
 
         for (size_t j = col; j < input_data->columns; j++) {
             col++;
@@ -150,14 +144,17 @@ for (size_t prof = 0; prof <= input_data->profundity; prof++) {
             printf("\n");
         }
 
+        update_game_board(output_data, temp);
 
+        free_matrix(input_data->rows, (void **)temp);
 
-        /*for (size_t x = 0; x < input_data->rows; x++) {
+        printf("Output Table\n");
+            for (size_t x = 0; x < input_data->rows; x++) {
             for (size_t i = 0; i < input_data->columns; i++) {
-                printf("%c", temp[x][i]);
+                printf("%c", output_data->table[x][i]);
             }
             printf("\n");
-        }*/
+        }
 
         /*for (int rot = 0; rot < num_rotations; rot++) {
             figure_t *figure =
@@ -173,5 +170,70 @@ for (size_t prof = 0; prof <= input_data->profundity; prof++) {
                 printf("\n");
             }
         }*/
+    }
+}
+
+void create_output_data(input_data_t *input_data, output_data_t *output_data) {
+    output_data->identifier = input_data->identifier;
+    output_data->rows = input_data->rows;
+    output_data->columns = input_data->columns;
+
+     output_data->table =
+        set_game_state(input_data->table, input_data->rows,
+                        input_data->columns);
+}
+
+char **clone_game_state(char **origin, char **destiny,
+                        size_t row_count, size_t col_count) {
+    for (size_t x = 0; x < row_count; x++) {
+        for (size_t i = 0; i < col_count; i++) {
+            sscanf(&origin[x][i], "%c",
+                   &destiny[x][i]);
+        }
+    }
+
+    return destiny;
+}
+
+char** set_game_state(char** origin, size_t row_count, size_t col_count) {
+    char **destiny = (char **)
+    create_matrix((row_count + 1),
+    (col_count + 1), sizeof(char));
+
+    destiny = clone_game_state(origin, destiny, row_count, col_count);
+
+    return destiny;
+}
+
+size_t get_play_score(char** table, size_t row_count, size_t col_count) {
+    size_t score = 0;
+
+    for (size_t x = 0; x < row_count; x++) {
+        size_t sum = 0;
+        for (size_t i = 0; i < col_count; i++) {
+            if (table[x][i] != '0') {
+                sum++;
+            }
+        }
+        if (sum > 0) {
+            score = score + (sum * x * x);
+        }
+    }
+
+    return score;
+}
+
+void update_game_board(output_data_t *output_data, char** table) {
+    size_t new_score =
+        get_play_score(table, output_data->rows, output_data->columns);
+
+    size_t current_score =
+        get_play_score(output_data->table, output_data->rows,
+            output_data->columns);
+
+    if (new_score > current_score) {
+        output_data->table =
+            clone_game_state(table, output_data->table, output_data->rows,
+                output_data->columns);
     }
 }

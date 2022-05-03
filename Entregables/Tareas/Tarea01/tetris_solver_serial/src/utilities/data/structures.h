@@ -17,7 +17,7 @@ typedef struct input_data {
 
 typedef struct output_data {
     size_t identifier;
-    size_t figure;
+    char figure[1];
     size_t rotation;
     size_t rows;
     size_t columns;

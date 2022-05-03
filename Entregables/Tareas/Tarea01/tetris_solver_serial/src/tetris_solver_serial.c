@@ -24,8 +24,4 @@ int main(int argc, char **arg) {
     get_input_data(filename, input_data);
 
     next_play(input_data);
-
-    free(input_data->table);
-
-    free(input_data);
 }
