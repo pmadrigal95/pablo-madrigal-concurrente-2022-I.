@@ -1,29 +1,72 @@
 // Copyright 2022 Pablo Madrigal <PABLO.MADRIGALRAMIREZ@ucr.ac.cr>
 
-#include "game_logic.h"
-#include "tetris_figure_factory.h"
-#include "matrix_utility.h"
-#include "file_utility.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "game_logic.h"
+#include "file_utility.h"
+#include "matrix_utility.h"
+#include "tetris_figure_factory.h"
 
-void initial_status(input_data_t *input_data, output_data_t *output_data);
+/**
+* Imports Utilities
+*/
+
+/*
+* tetris_figure_factory.h
+*/
+
+int get_tetris_figure_num_rotations(char figure);
+
+figure_t *get_tetris_figure(char figure, int num_rotations);
+
+/*
+* matrix_utility.h
+*/
+
+char **clone_char_matrix(char **origin, char **destiny,
+                        size_t row_count, size_t col_count);
+
+char** generate_matrix_from_another(char** origin,
+                        size_t row_count, size_t col_count);
+
+/*
+* file_utility.h
+*/
+
+void generate_output_file(size_t profundity, output_data_t *output_data);
+
+/*
+* Private 
+*/
+
+void initial_status(input_data_t *input_data,
+                    output_data_t *output_data);
+
+void create_output_data(input_data_t *input_data,
+                    output_data_t *output_data);
+
+char** set_game_state(char** origin, size_t row_count,
+                        size_t col_count);
+
 void calculate_next_figure(input_data_t *input_data,
                             output_data_t *output_data);
-int get_tetris_figure_num_rotations(char figure);
-figure_t *get_tetris_figure(char figure, int num_rotations);
-void create_output_data(input_data_t *input_data, output_data_t *output_data);
-char** set_game_state(char** origin, size_t row_count, size_t col_count);
+
 char** clone_game_state(char** origin, char **destiny,
                         size_t row_count, size_t col_count);
+
 size_t get_play_score(char** table, size_t row_count, size_t col_count);
+
 void update_game_board(output_data_t *output_data, char** table);
-void generate_output_file(size_t profundity, output_data_t *output_data);
-void generate_game_board_txt(output_data_t *output_data, size_t profundity, char figure);
+
+void generate_game_board_txt(output_data_t *output_data,
+                            size_t profundity, char figure);
 
 
+/*
+* Public Methods
+*/
 void next_play(input_data_t *input_data) {
     output_data_t *output_data = (output_data_t *)calloc(1,
                                                 sizeof(output_data_t));
@@ -39,12 +82,21 @@ void next_play(input_data_t *input_data) {
 }
 
 
+/*
+* Private Methods
+*/
 void initial_status(input_data_t *input_data, output_data_t *output_data) {
+    /**     
+     * Crear  Objeto de Salida
+     */
     create_output_data(input_data, output_data);
+
+    /**     
+     * Estado Inicial
+     */
     printf("Inicio de calculo de la partida [%zu]", input_data->identifier);
     printf(",Profundidad [%zu],", input_data->profundity);
     printf(" Tablero [%zu][%zu]\n", input_data->rows, input_data->columns);
-
 
     printf("Estado del Tablero\n");
 
@@ -54,6 +106,16 @@ void initial_status(input_data_t *input_data, output_data_t *output_data) {
         }
         printf("\n");
     }
+}
+
+void create_output_data(input_data_t *input_data, output_data_t *output_data) {
+    output_data->identifier = input_data->identifier;
+    output_data->rows = input_data->rows;
+    output_data->columns = input_data->columns;
+
+     output_data->table =
+        set_game_state(input_data->table, input_data->rows,
+                        input_data->columns);
 }
 
 void calculate_next_figure(input_data_t *input_data,
@@ -201,36 +263,16 @@ for (size_t prof = 0; prof <= input_data->profundity; prof++) {
     }
 }
 
-void create_output_data(input_data_t *input_data, output_data_t *output_data) {
-    output_data->identifier = input_data->identifier;
-    output_data->rows = input_data->rows;
-    output_data->columns = input_data->columns;
-
-     output_data->table =
-        set_game_state(input_data->table, input_data->rows,
-                        input_data->columns);
-}
-
 char **clone_game_state(char **origin, char **destiny,
                         size_t row_count, size_t col_count) {
-    for (size_t x = 0; x < row_count; x++) {
-        for (size_t i = 0; i < col_count; i++) {
-            sscanf(&origin[x][i], "%c",
-                   &destiny[x][i]);
-        }
-    }
-
-    return destiny;
+    /**
+     * clone_char_matrix From matrix_utility
+     */
+    return clone_char_matrix(origin, destiny, row_count, col_count);
 }
 
 char** set_game_state(char** origin, size_t row_count, size_t col_count) {
-    char **destiny = (char **)
-    create_matrix((row_count + 1),
-    (col_count + 1), sizeof(char));
-
-    destiny = clone_game_state(origin, destiny, row_count, col_count);
-
-    return destiny;
+    return generate_matrix_from_another(origin, row_count, col_count);
 }
 
 size_t get_play_score(char** table, size_t row_count, size_t col_count) {
