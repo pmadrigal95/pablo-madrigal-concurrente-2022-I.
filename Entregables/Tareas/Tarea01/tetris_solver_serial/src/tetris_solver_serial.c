@@ -3,12 +3,12 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "./utilities/data/structures.h"
-#include "./utilities/file_utility.h"
-#include "./utilities/game_logic.h"
+#include "structures.h"
+#include "game_logic.h"
+#include "file_utility.h"
 
-void get_input_data(char *filename, input_data_t *input_data);
 void next_play(input_data_t* input_data);
+void get_input_data(char *filename, input_data_t *input_data);
 
 int main(int argc, char **arg) {
     char *filename = "../test/test01.txt";

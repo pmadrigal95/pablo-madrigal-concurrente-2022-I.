@@ -1,9 +1,9 @@
 // Copyright 2022 Pablo Madrigal <PABLO.MADRIGALRAMIREZ@ucr.ac.cr>
 
-#ifndef ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_GAME_LOGIC_H_
-#define ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_GAME_LOGIC_H_
+#ifndef SRC_GAME_LOGIC_H_
+#define SRC_GAME_LOGIC_H_
 
-#include "./data/structures.h"
+#include "structures.h"
 
 /**
  * @brief Compute next move from input_data_t ptr
@@ -14,4 +14,4 @@
  */
 void next_play(input_data_t* input_data);
 
-#endif  // ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_GAME_LOGIC_H_ _
+#endif  // SRC_GAME_LOGIC_H_

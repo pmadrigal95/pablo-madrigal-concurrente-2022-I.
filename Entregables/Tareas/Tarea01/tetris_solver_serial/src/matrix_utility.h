@@ -1,7 +1,7 @@
 // Copyright 2022 Pablo Madrigal <PABLO.MADRIGALRAMIREZ@ucr.ac.cr>
 
-#ifndef ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_MATRIX_UTILITY_H_
-#define ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_MATRIX_UTILITY_H_
+#ifndef SRC_MATRIX_UTILITY_H_
+#define SRC_MATRIX_UTILITY_H_
 
 #include <stddef.h>
 
@@ -21,4 +21,4 @@ void *create_array(size_t row_count, size_t element_size);
 
 void free_array(void *array);
 
-#endif  // ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_MATRIX_UTILITY_H_
+#endif  // SRC_MATRIX_UTILITY_H_

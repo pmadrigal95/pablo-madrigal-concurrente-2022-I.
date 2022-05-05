@@ -59,6 +59,11 @@ void initial_status(input_data_t *input_data, output_data_t *output_data) {
 void calculate_next_figure(input_data_t *input_data,
     output_data_t *output_data) {
 for (size_t prof = 0; prof <= input_data->profundity; prof++) {
+        // Recursivo
+        //
+        // Crear children de nodo actual
+
+        // Creo Children del root -> voy e inserto todas las variantes de esa figura en esa lista de arbol
         printf("\nSiguiente Figura [%c]\n", input_data->next_figures[prof]);
 
         int num_rotations =
@@ -76,6 +81,7 @@ for (size_t prof = 0; prof <= input_data->profundity; prof++) {
 
             printf("Altura [%d], Ancho [%d]\n",
                figure->height, figure->width);
+
 
         size_t col = 0;
 
@@ -113,7 +119,20 @@ for (size_t prof = 0; prof <= input_data->profundity; prof++) {
                     break;
                 } else if ((i + figure->height < input_data->rows
                     && temp[i + figure->height][j] == '0')) {
-                    continue;
+                    int sum = 0;
+
+                    for (int k = 0; k < figure->height; k++) {
+                        for (int l = 0; l < figure->width; l++) {
+                            if (figure->value[k][l] != '0') {
+                                // https://www.delftstack.com/es/howto/c/convert-int-to-char/
+                                int int_value = temp[i+k+1][j+l] - '0';
+                                sum = sum + int_value;
+                            }
+                        }
+                    }
+                    if (sum == 0) {
+                        continue;
+                    }
                 }
 
                 for (int m = 0; m < figure->height; m++) {
@@ -147,8 +166,11 @@ for (size_t prof = 0; prof <= input_data->profundity; prof++) {
             printf("\n");
         }
 
+
+        // NOOO -> Guardando el temporal en los childrens
         update_game_board(output_data, temp);
 
+        // Limpio templ
         free_matrix(input_data->rows, (void **)temp);
 
         printf("Output Table\n");

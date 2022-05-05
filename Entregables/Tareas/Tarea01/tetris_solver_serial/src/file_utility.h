@@ -1,9 +1,9 @@
 // Copyright 2022 Pablo Madrigal <PABLO.MADRIGALRAMIREZ@ucr.ac.cr>
 
-#ifndef ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_LOGIC_FILE_UTILITIES_H_
-#define ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_LOGIC_FILE_UTILITIES_H_
+#ifndef SRC_FILE_UTILITY_H_
+#define SRC_FILE_UTILITY_H_
 
-#include "./data/structures.h"
+#include "structures.h"
 
 /**
  * @brief Get a input_data_t ptr to start the program
@@ -15,4 +15,4 @@
  */
 void get_input_data(char *filename, input_data_t* input_data);
 
-#endif  // ENTREGABLES_TAREAS_TAREA01_TETRIS_SOLVER_SERIAL_SRC_UTILITIES_LOGIC_FILE_UTILITIES_H_
+#endif  // SRC_FILE_UTILITY_H_
