@@ -7,7 +7,18 @@
 #include "game_logic.h"
 #include "file_utility.h"
 
+/**
+* Imports Utilities
+*/
+
+/*
+* game_logic.h
+*/
 void next_play(input_data_t* input_data);
+
+/*
+* file_utility.h
+*/
 void get_input_data(char *filename, input_data_t *input_data);
 
 int main(int argc, char **arg) {
