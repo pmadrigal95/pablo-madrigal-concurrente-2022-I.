@@ -128,6 +128,10 @@ void create_output_data(input_data_t *input_data, output_data_t *output_data) {
 void calculate_next_figure(input_data_t *input_data,
     output_data_t *output_data) {
 for (size_t prof = 0; prof <= input_data->profundity; prof++) {
+    char **current_status =
+        set_game_state(output_data->table, output_data->rows,
+                        output_data->columns);
+
     printf("\nSiguiente Figura [%c]\n", input_data->next_figures[prof]);
 
     int num_rotations =
@@ -136,35 +140,24 @@ for (size_t prof = 0; prof <= input_data->profundity; prof++) {
     printf("Rotaciones de la Figura [%c] : [%d]\n",
             input_data->next_figures[prof], num_rotations);
 
-    figure_t *figure =
-        get_tetris_figure(input_data->next_figures[prof], 0);
+    for (int rot = 0; rot < num_rotations; rot++) {
+        figure_t *figure =
+            get_tetris_figure(input_data->next_figures[prof], rot);
 
         printf("Altura [%d], Ancho [%d]\n",
             figure->height, figure->width);
 
-        char **current_status =
-        set_game_state(output_data->table, output_data->rows,
-                        output_data->columns);
+        for (int x = 0; x < figure->height; x++) {
+            for (int i = 0; i < figure->width; i++) {
+                    printf("%c", figure->value[x][i]);
+            }
+            printf("\n");
+        }
 
         validate_insert(figure, current_status, output_data);
-
+    }
         // Limpio templ
         free_matrix(output_data->rows, (void **)current_status);
-
-        /*for (int rot = 0; rot < num_rotations; rot++) {
-            figure_t *figure =
-                get_tetris_figure(input_data->next_figures[prof], rot);
-
-            printf("Altura [%d], Ancho [%d]\n",
-               figure->height, figure->width);
-
-            for (int x = 0; x < figure->height; x++) {
-                for (int i = 0; i < figure->width; i++) {
-                    printf("%c", figure->value[x][i]);
-                }
-                printf("\n");
-            }
-        }*/
 
         generate_game_board_txt(output_data, prof,
                                 input_data->next_figures[prof]);
