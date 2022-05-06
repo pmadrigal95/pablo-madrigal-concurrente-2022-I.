@@ -27,4 +27,6 @@ void *create_array(size_t row_count, size_t element_size);
 
 void free_array(void *array);
 
+void print_char_matrix(char ** matrix, size_t row_count, size_t col_count);
+
 #endif  // SRC_MATRIX_UTILITY_H_

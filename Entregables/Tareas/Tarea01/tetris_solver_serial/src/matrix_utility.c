@@ -72,3 +72,12 @@ void *create_array(size_t row_count, size_t element_size) {
 void free_array(void *array) {
     free(array);
 }
+
+void print_char_matrix(char ** matrix, size_t row_count, size_t col_count) {
+    for (size_t x = 0; x < row_count; x++) {
+            for (size_t i = 0; i < col_count; i++) {
+                printf("%c", matrix[x][i]);
+            }
+            printf("\n");
+        }
+}

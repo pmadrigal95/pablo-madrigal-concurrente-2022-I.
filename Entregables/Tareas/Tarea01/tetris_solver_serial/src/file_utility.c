@@ -9,12 +9,13 @@
 #include "file_utility.h"
 #include "matrix_utility.h"
 
-bool validate_number(char item, int type);
-void print_error_message(input_data_t *input_data, int type);
-void *create_array(size_t row_count, size_t element_size);
-void free_matrix(const size_t row_count, void **matrix);
+
 void free_array(void *array);
+bool validate_number(char item, int type);
+void free_matrix(const size_t row_count, void **matrix);
+void *create_array(size_t row_count, size_t element_size);
 void validate_incomming_txt(FILE *in_file, char *filename);
+void print_error_message(input_data_t *input_data, int type);
 void write_output_data(char *filename, output_data_t *output_data);
 void assign_initial_values(FILE *in_file, input_data_t *input_data);
 void assign_incomming_array(FILE *in_file, input_data_t *input_data);
