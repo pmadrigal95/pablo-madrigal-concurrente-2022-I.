@@ -35,4 +35,6 @@ int main(int argc, char **arg) {
     get_input_data(filename, input_data);
 
     next_play(input_data);
+
+    return EXIT_SUCCESS;
 }
