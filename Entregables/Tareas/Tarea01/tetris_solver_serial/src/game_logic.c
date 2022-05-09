@@ -365,31 +365,31 @@ void validate_insert(figure_t *figure, char **current_status,
                         }
                     }
 
-                        finish = true;
+                    // Matriz resultante luego del intento
+                    print_char_matrix(temp, output_data->rows,
+                        output_data->columns);
 
-                        break;
-                    }
+                    // Valida si debe actualizar la partida del juego
+                    update_game_board(output_data, temp);
 
-                    if (finish) {
-                        break;
-                    }
+                    finish = true;
 
-                    /* si no logro colocar la pieza y ya no hay tablero de juego
-                     * Se muestra un error
-                    */
-                    if (invalid_column == output_data->columns) {
-                        printf("[invalid_column]\n");
-                        printf("La Figura no calza en el tablero del juego!\n");
-                        return;
-                    }
+                    break;
+                }
+
+                if (finish) {
+                    break;
+                }
+
+                /* si no logro colocar la pieza y ya no hay tablero de juego
+                    * Se muestra un error
+                */
+                if (invalid_column == output_data->columns) {
+                    printf("[invalid_column]\n");
+                    printf("La Figura no calza en el tablero del juego!\n");
+                    return;
+                }
             }
-
-            // Matriz resultante luego del intento
-            print_char_matrix(temp, output_data->rows,
-                output_data->columns);
-
-            // Valida si debe actualizar la partida del juego
-            update_game_board(output_data, temp);
 
             // Libera la memoria
             free_matrix(output_data->rows, (void **)temp);
