@@ -4,7 +4,7 @@
 
 Lluvia de ideas, de como se podria abarcar el problema y como se podria resolver
 
-![Idea General del Proceso](Diagrama.PNG)
+![Idea General del Proceso](ideas.PNG)
 
 ## Diagrama UML
 

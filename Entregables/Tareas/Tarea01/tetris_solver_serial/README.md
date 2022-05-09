@@ -135,6 +135,7 @@ De acuerdo a la profundidad configurada la tarea generará un archivo .txt por c
 
 1. asan : dynamic-stack-buffer-overflow scanf_common
 1. tsan : ThreadSanitizer: heap-use-after-free
+1. El archivo src/game_logic_alter.txt contiene logica necesaria para realizar todas la combinaciones posibles, pero su limitante es realizar hasta un maximo de profundidad 4 y los archivos txt no son tan precisos.
 
 ## Créditos
 
