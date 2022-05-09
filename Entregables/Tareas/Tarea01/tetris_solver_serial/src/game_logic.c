@@ -162,6 +162,8 @@ for (size_t prof = 0; prof <= input_data->profundity; prof++) {
         set_game_state(output_data->table, output_data->rows,
                         output_data->columns);
 
+    output_data->figure_count = 0;
+
     printf("\nSiguiente Figura [%c]\n", input_data->next_figures[prof]);
 
     // Obtener numero de rotaciones de la figura
@@ -190,9 +192,15 @@ for (size_t prof = 0; prof <= input_data->profundity; prof++) {
         // Liberar memoria del estado previo a la figura
         free_matrix(output_data->rows, (void **)current_status);
 
-        // Generar archivo del nivel
-        generate_game_board_txt(output_data, prof,
+        if (output_data->figure_count > 0) {
+            // Generar archivo del nivel
+            generate_game_board_txt(output_data, prof,
                                 input_data->next_figures[prof]);
+            output_data->figure_count = 0;
+        } else {
+            printf("No se pueden colocar mas figuras, Fin del Juego!\n");
+            break;
+        }
     }
 }
 
@@ -371,6 +379,8 @@ void validate_insert(figure_t *figure, char **current_status,
 
                     // Valida si debe actualizar la partida del juego
                     update_game_board(output_data, temp);
+
+                    output_data->figure_count++;
 
                     finish = true;
 

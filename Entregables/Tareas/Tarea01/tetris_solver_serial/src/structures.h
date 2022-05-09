@@ -22,6 +22,7 @@ typedef struct output_data {
     size_t rows;
     size_t columns;
     char **table;
+    size_t figure_count;
 } output_data_t;
 
 #endif  // SRC_STRUCTURES_H_
