@@ -11,11 +11,10 @@
  * game_logic_utility.h
  */
 
-void initial_status(input_data_t *input_data,
-                    output_data_t *output_data);
+void initial_status(input_data_t *input_data);
 
-void create_output_data(input_data_t *input_data,
-                        output_data_t *output_data);
+void create_output_data(input_data_t *input_data, output_data_t *output_data,
+                        char **current_status);
 
 char **set_game_state(char **origin, size_t row_count,
                       size_t col_count);
@@ -28,7 +27,7 @@ char **clone_game_state(char **origin, char **destiny,
 
 size_t get_play_score(char **table, size_t row_count, size_t col_count);
 
-void update_game_board(output_data_t *output_data, char **table);
+void update_game_board(output_data_t *output_data, char **table, int rot);
 
 void generate_game_board_txt(output_data_t *output_data,
                              size_t profundity, char figure);
@@ -46,14 +45,17 @@ int review_space(figure_t *figure, char **temp,
 void calculate_next_figure_recursive(input_data_t *input_data,
                                      size_t current_profundity);
 
-void set_figure(input_data_t *input_data, size_t current_profundity,
+bool set_figure(input_data_t *input_data, size_t current_profundity,
                 int num_rotations);
 
 void insert_by_col(figure_t *figure, input_data_t *input_data,
-                   char **current_status);
+output_data_t *output_data, char **current_status, int rot);
 
 void validate_insert_figure(figure_t *figure, input_data_t *input_data,
-                            char **current_status, size_t col);
+output_data_t *output_data, char **current_status, size_t col, int rot);
+
+void update_current_status(input_data_t *input_data, output_data_t *output_data,
+                           size_t current_profundity);
 
 /*
  * Public Methods
@@ -67,9 +69,7 @@ void validate_insert_figure(figure_t *figure, input_data_t *input_data,
  *
  */
 void next_play(input_data_t *input_data) {
-    output_data_t *output_data = (output_data_t *)calloc(1,
-                                                         sizeof(output_data_t));
-    initial_status(input_data, output_data);
+    initial_status(input_data);
 
     // calculate_next_figure(input_data, output_data);
 
@@ -77,10 +77,7 @@ void next_play(input_data_t *input_data) {
 
     free_matrix(input_data->rows, (void **)input_data->table);
     free(input_data);
-
     free_array((void **)input_data->next_figures);
-    free_matrix(output_data->rows, (void **)output_data->table);
-    free(output_data);
 }
 
 /*
@@ -100,22 +97,38 @@ void calculate_next_figure_recursive(input_data_t *input_data,
     printf("Rotaciones de la Figura [%c] : [%d]\n",
            input_data->next_figures[current_profundity], num_rotations);
 
-    set_figure(input_data, current_profundity, num_rotations);
+    bool result = set_figure(input_data, current_profundity, num_rotations);
 
-    if (current_profundity == input_data->profundity) {
-        // Generar txt
-    } else {
+    if (current_profundity < input_data->profundity && result == true) {
         calculate_next_figure_recursive(input_data,
                                         (current_profundity + 1));
     }
 }
 
-void set_figure(input_data_t *input_data, size_t current_profundity,
+/**
+ * @details Metodo que calcula insertar las Figuras
+ * @param input_data_t *input_data
+ * @param output_data_t *output_data
+ * @return Realiza todos los calculo (Figuras y rotaciones en un tablero de juego)
+ * y genera un txt por nivel / profundidad
+ *
+ */
+bool set_figure(input_data_t *input_data, size_t current_profundity,
                 int num_rotations) {
+    bool result = false;
+    // Asignacion de memoria
+    output_data_t *output_data = (output_data_t *)calloc(1,
+                                                         sizeof(output_data_t));
+
     // Matriz actual antes de intentar colocar la pieza
     char **current_status =
         set_game_state(input_data->table, input_data->rows,
                        input_data->columns);
+
+    /**
+     * Crear  Objeto de Salida
+     */
+    create_output_data(input_data, output_data, current_status);
 
     // Realizar intentos por rotacion y por figura
     for (int rot = 0; rot < num_rotations; rot++) {
@@ -131,22 +144,57 @@ void set_figure(input_data_t *input_data, size_t current_profundity,
         print_char_matrix(figure->value, figure->height,
                           figure->width);
         // Intenta colocar la Figura en la mejor posicion
-        insert_by_col(figure, input_data, current_status);
+        insert_by_col(figure, input_data, output_data, current_status, rot);
+    }
+
+    if (output_data->figure_count > 0) {
+        update_current_status(input_data, output_data, current_profundity);
+        result = true;
+    } else {
+        printf("No se pueden colocar mas figuras, Fin del Juego!\n");
+        result = false;
     }
 
     // Liberar memoria del estado previo a la figura
     free_matrix(input_data->rows, (void **)current_status);
+
+    free_matrix(output_data->rows, (void **)output_data->table);
+    free(output_data);
+
+    return result;
+}
+
+void update_current_status(input_data_t *input_data, output_data_t *output_data,
+                           size_t current_profundity) {
+    input_data->table =
+        clone_game_state(output_data->table, input_data->table,
+                         output_data->rows, output_data->columns);
+    // Generar archivo del nivel
+    output_data->figure_count = 0;
+    // Generar archivo del nivel
+    generate_game_board_txt(output_data, current_profundity,
+                            input_data->next_figures[current_profundity]);
 }
 
 void insert_by_col(figure_t *figure, input_data_t *input_data,
-                   char **current_status) {
+output_data_t *output_data, char **current_status, int rot) {
     for (size_t col = 0; col < input_data->columns; col++) {
-        validate_insert_figure(figure, input_data, current_status, col);
+        validate_insert_figure(figure, input_data, output_data,
+                               current_status, col, rot);
     }
 }
 
+/**
+ * @details Metodo que calcula insertar Una Figura en una posicion en una matriz dada
+ * @param figure_t *figure,
+ * @param char **current_status
+ * @param output_data_t *output_data
+ * @return Valida si la jugada tiene mas puntos que la actual y
+ * actualiza el output_data
+ *
+ */
 void validate_insert_figure(figure_t *figure, input_data_t *input_data,
-                            char **current_status, size_t col) {
+output_data_t *output_data, char **current_status, size_t col, int rot) {
     // Generar un tablero temporal para la insercion de la Figura
     char **temp =
         set_game_state(current_status, input_data->rows,
@@ -187,8 +235,8 @@ void validate_insert_figure(figure_t *figure, input_data_t *input_data,
                 invalid_column++;
                 break;
             } else if (
-            (i + figure->height < input_data->rows
-            && temp[i + figure->height][j] == '0')) {
+                (i + figure->height < input_data->rows
+                && temp[i + figure->height][j] == '0')) {
                 /* Se verifica si puede seguir cayendo,
                  * y se valida que la siguiente fila tenga espacio antes de cambiar de fila
                  */
@@ -211,6 +259,11 @@ void validate_insert_figure(figure_t *figure, input_data_t *input_data,
             // Matriz resultante luego del intento
             print_char_matrix(temp, input_data->rows,
                               input_data->columns);
+
+            // Valida si debe actualizar la partida del juego
+            update_game_board(output_data, temp, rot);
+
+            output_data->figure_count++;
 
             finish = true;
 

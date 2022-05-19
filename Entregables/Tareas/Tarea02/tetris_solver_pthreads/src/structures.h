@@ -24,9 +24,4 @@ typedef struct output_data {
     char **table;
     size_t figure_count;
 } output_data_t;
-
-typedef struct list_best_scores {
-    output_data_t* output_data;
-} list_best_scores_t;
-
 #endif  // SRC_STRUCTURES_H_

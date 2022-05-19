@@ -12,11 +12,10 @@
 #include "matrix_utility.h"
 #include "tetris_figure_factory.h"
 
-void initial_status(input_data_t *input_data,
-                    output_data_t *output_data);
+void initial_status(input_data_t *input_data);
 
-void create_output_data(input_data_t *input_data,
-                    output_data_t *output_data);
+void create_output_data(input_data_t *input_data, output_data_t *output_data,
+char **current_status);
 
 char** set_game_state(char** origin, size_t row_count,
                         size_t col_count);
@@ -29,7 +28,7 @@ char** clone_game_state(char** origin, char **destiny,
 
 size_t get_play_score(char** table, size_t row_count, size_t col_count);
 
-void update_game_board(output_data_t *output_data, char** table);
+void update_game_board(output_data_t *output_data, char** table, int rot);
 
 void generate_game_board_txt(output_data_t *output_data,
                             size_t profundity, char figure);
