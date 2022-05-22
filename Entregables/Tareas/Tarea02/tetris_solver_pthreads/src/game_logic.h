@@ -12,6 +12,6 @@
  * @return Best possible move
  *
  */
-void next_play(input_data_t* input_data);
+void next_play(input_data_t *input_data, size_t thread_count);
 
 #endif  // SRC_GAME_LOGIC_H_

@@ -12,7 +12,7 @@
 #include "matrix_utility.h"
 #include "tetris_figure_factory.h"
 
-void initial_status(input_data_t *input_data);
+void initial_status(input_data_t *input_data, size_t thread_count);
 
 void create_output_data(input_data_t *input_data, output_data_t *output_data,
 char **current_status);

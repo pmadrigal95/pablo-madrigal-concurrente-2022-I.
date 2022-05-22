@@ -1,9 +1,13 @@
 // Copyright 2022 Pablo Madrigal <PABLO.MADRIGALRAMIREZ@ucr.ac.cr>
 
+// This line is only for Visual Studio Code to recognize CLOCK_MONOTONIC
+#define _POSIX_C_SOURCE 199309L
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <pthread.h>
 #include "game_logic.h"
 #include "game_logic_utility.h"
 
@@ -11,7 +15,7 @@
  * game_logic_utility.h
  */
 
-void initial_status(input_data_t *input_data);
+void initial_status(input_data_t *input_data, size_t thread_count);
 
 void create_output_data(input_data_t *input_data, output_data_t *output_data,
                         char **current_status);
@@ -68,16 +72,28 @@ void update_current_status(input_data_t *input_data, output_data_t *output_data,
  * @return Best possible move
  *
  */
-void next_play(input_data_t *input_data) {
-    initial_status(input_data);
+void next_play(input_data_t *input_data, size_t thread_count) {
+    struct timespec start_time;
+        clock_gettime(/*clk_id*/ CLOCK_MONOTONIC, &start_time);
+
+    initial_status(input_data, thread_count);
 
     // calculate_next_figure(input_data, output_data);
 
     calculate_next_figure_recursive(input_data, 0);
 
+    struct timespec finish_time;
+    clock_gettime(/*clk_id*/ CLOCK_MONOTONIC, &finish_time);
+
+    double elapsed = (finish_time.tv_sec - start_time.tv_sec) +
+                         (finish_time.tv_nsec - start_time.tv_nsec) * 1e-9;
+
+
     free_matrix(input_data->rows, (void **)input_data->table);
     free(input_data);
     free_array((void **)input_data->next_figures);
+
+    printf("execution time: %.9lfs\n", elapsed);
 }
 
 /*

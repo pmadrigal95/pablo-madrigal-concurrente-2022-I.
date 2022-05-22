@@ -49,10 +49,17 @@ void generate_output_file(size_t profundity, output_data_t *output_data);
  * @param output_data ptr
  *
  */
-void initial_status(input_data_t *input_data) {
+void initial_status(input_data_t *input_data, size_t thread_count) {
     /**     
      * Estado Inicial
      */
+
+    if (input_data->columns <= thread_count) {
+        printf("Error, no se pueden crear [%zu] hilos!\n",
+        thread_count);
+        exit(EXIT_FAILURE);
+    }
+
     printf("Inicio de calculo de la partida [%zu]", input_data->identifier);
     printf(",Profundidad [%zu],", input_data->profundity);
     printf(" Tablero [%zu][%zu]\n", input_data->rows, input_data->columns);

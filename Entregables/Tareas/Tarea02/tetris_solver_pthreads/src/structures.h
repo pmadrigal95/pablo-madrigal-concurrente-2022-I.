@@ -24,4 +24,10 @@ typedef struct output_data {
     char **table;
     size_t figure_count;
 } output_data_t;
+
+
+typedef struct private_data {
+    size_t thread_num;
+    size_t num_threads;
+} private_data_t;
 #endif  // SRC_STRUCTURES_H_

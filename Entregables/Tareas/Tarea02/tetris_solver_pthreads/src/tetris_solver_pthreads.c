@@ -1,8 +1,12 @@
 // Copyright 2022 Pablo Madrigal <PABLO.MADRIGALRAMIREZ@ucr.ac.cr>
 
+// This line is only for Visual Studio Code to recognize CLOCK_MONOTONIC
+#define _POSIX_C_SOURCE 199309L
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "structures.h"
 #include "game_logic.h"
 #include "file_utility.h"
@@ -14,7 +18,7 @@
 /*
 * game_logic.h
 */
-void next_play(input_data_t* input_data);
+void next_play(input_data_t *input_data, size_t thread_count);
 
 /*
 * file_utility.h
@@ -23,9 +27,17 @@ void get_input_data(char *filename, input_data_t *input_data);
 
 int main(int argc, char **arg) {
     char *filename = "../test/test01.txt";
+
+    size_t thread_count = sysconf(_SC_NPROCESSORS_ONLN);
+
     if (argc == 2) {
         filename = arg[1];
+    } else if (argc == 3) {
+        filename = arg[1];
+        sscanf(arg[2], "%zu", &thread_count);
     }
+
+    printf("%zu\n", thread_count);
 
     printf("Inicio del Programa [tetris_solver_serial]\n");
 
@@ -34,7 +46,7 @@ int main(int argc, char **arg) {
 
     get_input_data(filename, input_data);
 
-    next_play(input_data);
+    next_play(input_data, thread_count);
 
     return EXIT_SUCCESS;
 }
