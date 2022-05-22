@@ -27,6 +27,11 @@ typedef struct output_data {
 
 
 typedef struct private_data {
+    input_data_t *input_data;
+    output_data_t *output_data;
+    char **current_status;
+    int num_rotations;
+    size_t current_profundity;
     size_t thread_num;
     size_t num_threads;
 } private_data_t;

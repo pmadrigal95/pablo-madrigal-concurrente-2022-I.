@@ -47,10 +47,10 @@ int review_space(figure_t *figure, char **temp,
  */
 
 void calculate_next_figure_recursive(input_data_t *input_data,
-                                     size_t current_profundity);
+size_t current_profundity, size_t thread_count);
 
 bool set_figure(input_data_t *input_data, size_t current_profundity,
-                int num_rotations);
+                int num_rotations, size_t thread_count);
 
 void insert_by_col(figure_t *figure, input_data_t *input_data,
 output_data_t *output_data, char **current_status, int rot);
@@ -60,6 +60,12 @@ output_data_t *output_data, char **current_status, size_t col, int rot);
 
 void update_current_status(input_data_t *input_data, output_data_t *output_data,
                            size_t current_profundity);
+
+void create_threads(input_data_t *input_data, output_data_t *output_data,
+char **current_status, int num_rotations, size_t current_profundity,
+ size_t thread_count);
+
+void* run(void*);
 
 /*
  * Public Methods
@@ -80,7 +86,7 @@ void next_play(input_data_t *input_data, size_t thread_count) {
 
     // calculate_next_figure(input_data, output_data);
 
-    calculate_next_figure_recursive(input_data, 0);
+    calculate_next_figure_recursive(input_data, 0, thread_count);
 
     struct timespec finish_time;
     clock_gettime(/*clk_id*/ CLOCK_MONOTONIC, &finish_time);
@@ -101,7 +107,7 @@ void next_play(input_data_t *input_data, size_t thread_count) {
  */
 
 void calculate_next_figure_recursive(input_data_t *input_data,
-                                     size_t current_profundity) {
+size_t current_profundity, size_t thread_count) {
     printf("\nSiguiente Figura [%c]\n",
            input_data->next_figures[current_profundity]);
 
@@ -113,11 +119,12 @@ void calculate_next_figure_recursive(input_data_t *input_data,
     printf("Rotaciones de la Figura [%c] : [%d]\n",
            input_data->next_figures[current_profundity], num_rotations);
 
-    bool result = set_figure(input_data, current_profundity, num_rotations);
+    bool result = set_figure(input_data, current_profundity,
+    num_rotations, thread_count);
 
     if (current_profundity < input_data->profundity && result == true) {
         calculate_next_figure_recursive(input_data,
-                                        (current_profundity + 1));
+                                        (current_profundity + 1), thread_count);
     }
 }
 
@@ -130,7 +137,7 @@ void calculate_next_figure_recursive(input_data_t *input_data,
  *
  */
 bool set_figure(input_data_t *input_data, size_t current_profundity,
-                int num_rotations) {
+                int num_rotations, size_t thread_count) {
     bool result = false;
     // Asignacion de memoria
     output_data_t *output_data = (output_data_t *)calloc(1,
@@ -146,8 +153,14 @@ bool set_figure(input_data_t *input_data, size_t current_profundity,
      */
     create_output_data(input_data, output_data, current_status);
 
+    /**
+     * Crear Hilos
+     */
+    create_threads(input_data, output_data, current_status,
+    num_rotations, current_profundity, thread_count);
+
     // Realizar intentos por rotacion y por figura
-    for (int rot = 0; rot < num_rotations; rot++) {
+    /*for (int rot = 0; rot < num_rotations; rot++) {
         // Obtener Figura y su rotacion actual
         figure_t *figure =
             get_tetris_figure(input_data->next_figures[current_profundity],
@@ -169,7 +182,7 @@ bool set_figure(input_data_t *input_data, size_t current_profundity,
     } else {
         printf("No se pueden colocar mas figuras, Fin del Juego!\n");
         result = false;
-    }
+    }*/
 
     // Liberar memoria del estado previo a la figura
     free_matrix(input_data->rows, (void **)current_status);
@@ -302,4 +315,61 @@ output_data_t *output_data, char **current_status, size_t col, int rot) {
 
     // Libera la memoria
     free_matrix(input_data->rows, (void **)temp);
+}
+
+
+void create_threads(input_data_t *input_data, output_data_t *output_data,
+char **current_status, int num_rotations, size_t current_profundity,
+ size_t thread_count) {
+    private_data_t *private_data = (private_data_t *)
+        calloc(thread_count, sizeof(private_data_t));
+
+    pthread_t* threads = (pthread_t*)calloc(thread_count, sizeof(pthread_t));
+
+    if (threads && private_data) {
+        for (size_t index = 0; index < thread_count; ++index) {
+            // Asignacion de valores
+            private_data[index].input_data = input_data;
+            private_data[index].output_data = output_data;
+            private_data[index].current_status = current_status;
+            private_data[index].num_rotations = num_rotations;
+            private_data[index].current_profundity = current_profundity;
+            private_data[index].thread_num = index;
+            private_data[index].num_threads = thread_count;
+
+            if (pthread_create(&threads[index], NULL, run,
+                &private_data[index])
+                    != EXIT_SUCCESS) {
+                fprintf(stderr, "Could not create thread %zu.\n", index);
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        for (size_t index = 0; index < thread_count; ++index) {
+            pthread_join(threads[index], /*value_ptr*/ NULL);
+        }
+        free(threads);
+        free(private_data);
+
+        printf("columnas finales %zu\n", output_data->columns);
+
+    } else {
+        fprintf(stderr, "Unable to allocate memory for %zu threads\n",
+            thread_count);
+        exit(EXIT_FAILURE);
+    }
+}
+
+void* run(void* data) {
+    const private_data_t *private_data = (private_data_t *)data;
+
+    printf("columnas %zu\n",
+           private_data->output_data->columns);
+
+    private_data->output_data->columns = 1;
+
+    printf("thread_num %zu\n",
+           private_data->thread_num);
+
+    return NULL;
 }

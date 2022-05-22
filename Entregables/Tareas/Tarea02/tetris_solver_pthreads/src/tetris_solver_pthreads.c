@@ -34,10 +34,12 @@ int main(int argc, char **arg) {
         filename = arg[1];
     } else if (argc == 3) {
         filename = arg[1];
-        sscanf(arg[2], "%zu", &thread_count);
+        if (sscanf(arg[2], "%zu", &thread_count)!= 1
+                || errno) {
+                fprintf(stderr, "error: Recuento de hilos no válido\n");
+                exit(EXIT_FAILURE);
+        }
     }
-
-    printf("%zu\n", thread_count);
 
     printf("Inicio del Programa [tetris_solver_serial]\n");
 
