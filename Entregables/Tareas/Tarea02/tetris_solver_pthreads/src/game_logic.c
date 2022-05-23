@@ -271,9 +271,12 @@ void validate_insert_figure(private_data_t *private_data,  figure_t *figure) {
             print_char_matrix(temp, private_data->input_data->rows,
                               private_data->input_data->columns);
 
+            shared_data_t* shared_data = private_data->shared_data;
             // Valida si debe actualizar la partida del juego
+            pthread_mutex_lock(&shared_data->can_review_score);
             update_game_board(private_data->output_data, temp,
             private_data->num_rotations);
+            pthread_mutex_unlock(&shared_data->can_review_score);
 
             finish = true;
 
@@ -301,40 +304,56 @@ void validate_insert_figure(private_data_t *private_data,  figure_t *figure) {
 void create_threads(input_data_t *input_data, output_data_t *output_data,
 char **current_status, int num_rotations, size_t current_profundity,
  size_t thread_count) {
-    private_data_t *private_data = (private_data_t *)
-        calloc(thread_count, sizeof(private_data_t));
-
+    //creacion de hilos
     pthread_t* threads = (pthread_t*)calloc(thread_count, sizeof(pthread_t));
 
-    if (threads && private_data) {
-        for (size_t index = 0; index < thread_count; ++index) {
-            // Asignacion de valores
-            private_data[index].input_data = input_data;
-            private_data[index].output_data = output_data;
-            private_data[index].current_status = current_status;
-            private_data[index].num_rotations = num_rotations;
-            private_data[index].current_profundity = current_profundity;
-            private_data[index].thread_num = index;
-            private_data[index].num_threads = thread_count;
+    if (threads) {
+        private_data_t *private_data = (private_data_t *)
+            calloc(thread_count, sizeof(private_data_t));
 
-            if (pthread_create(&threads[index], NULL, run,
-                &private_data[index])
-                    != EXIT_SUCCESS) {
-                fprintf(stderr, "Could not create thread %zu.\n", index);
-                exit(EXIT_FAILURE);
+        shared_data_t *shared_data = (shared_data_t *)calloc(1,
+                                                             sizeof(shared_data_t));
+
+        if (shared_data && private_data) {
+            pthread_mutex_init(&shared_data->can_review_score, NULL);
+
+            for (size_t index = 0; index < thread_count; ++index) {
+                // Asignacion de valores
+                private_data[index].input_data = input_data;
+                private_data[index].output_data = output_data;
+                private_data[index].current_status = current_status;
+                private_data[index].num_rotations = num_rotations;
+                private_data[index].current_profundity = current_profundity;
+                private_data[index].thread_num = index;
+                private_data[index].num_threads = thread_count;
+                private_data[index].shared_data = shared_data;
+
+                if (pthread_create(&threads[index], NULL, run,
+                                   &private_data[index]) != EXIT_SUCCESS) {
+                    fprintf(stderr, "Could not create thread %zu.\n", index);
+                    exit(EXIT_FAILURE);
+                }
             }
+
+            for (size_t index = 0; index < thread_count; ++index) {
+                pthread_join(threads[index], /*value_ptr*/ NULL);
+            }
+            free(private_data);
+
+            pthread_mutex_destroy(&shared_data->can_review_score);
+            free(shared_data);
+        } else {
+            fprintf(stderr, "Unable to allocate memory for %zu threads\n",
+                    thread_count);
+            exit(EXIT_FAILURE);
         }
 
-        for (size_t index = 0; index < thread_count; ++index) {
-            pthread_join(threads[index], /*value_ptr*/ NULL);
-        }
         free(threads);
-        free(private_data);
 
     } else {
         fprintf(stderr, "Unable to allocate memory for %zu threads\n",
             thread_count);
-        exit(EXIT_FAILURE);
+         exit(EXIT_FAILURE);
     }
 }
 

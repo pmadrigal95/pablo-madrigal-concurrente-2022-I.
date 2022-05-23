@@ -4,6 +4,7 @@
 #define SRC_STRUCTURES_H_
 
 #include <stddef.h>
+#include <pthread.h>
 
 typedef struct input_data {
     size_t identifier;
@@ -25,6 +26,10 @@ typedef struct output_data {
     size_t figure_count;
 } output_data_t;
 
+typedef struct shared_data {
+    pthread_mutex_t can_review_score;
+} shared_data_t;
+
 
 typedef struct private_data {
     input_data_t *input_data;
@@ -34,5 +39,6 @@ typedef struct private_data {
     size_t current_profundity;
     size_t thread_num;
     size_t num_threads;
+    shared_data_t* shared_data;
 } private_data_t;
 #endif  // SRC_STRUCTURES_H_
