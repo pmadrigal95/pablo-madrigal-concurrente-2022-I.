@@ -36,9 +36,6 @@ void update_game_board(output_data_t *output_data, char **table, int rot);
 void generate_game_board_txt(output_data_t *output_data,
                              size_t profundity, char figure);
 
-void validate_insert(figure_t *figure, char **current_status,
-                     output_data_t *output_data);
-
 int review_space(figure_t *figure, char **temp,
                  size_t row_count, size_t col_count);
 
@@ -52,10 +49,9 @@ size_t current_profundity, size_t thread_count);
 bool set_figure(input_data_t *input_data, size_t current_profundity,
                 int num_rotations, size_t thread_count);
 
-void insert_by_col(figure_t *figure, input_data_t *input_data,
-output_data_t *output_data, char **current_status, int rot);
+void insert_by_col(private_data_t *private_data,  figure_t *figure);
 
-void validate_insert_figure(private_data_t *private_data,  figure_t *figure);
+void validate_insert_figure(private_data_t *private_data,  figure_t *figure, size_t col);
 
 void update_current_status(input_data_t *input_data, output_data_t *output_data,
                            size_t current_profundity);
@@ -187,13 +183,14 @@ void update_current_status(input_data_t *input_data, output_data_t *output_data,
                             input_data->next_figures[current_profundity]);
 }
 
-/*void insert_by_col(figure_t *figure, input_data_t *input_data,
-output_data_t *output_data, char **current_status, int rot) {
-    for (size_t col = 0; col < input_data->columns; col++) {
-        validate_insert_figure(figure, input_data, output_data,
-                               current_status, col, rot);
+void insert_by_col(private_data_t *private_data,  figure_t *figure) {
+    // Mapeo Ciclico
+    for (size_t col = private_data->thread_num;
+    col < private_data->input_data->columns;
+    col = col + private_data->num_threads) {
+        validate_insert_figure(private_data, figure, col);
     }
-}*/
+}
 
 /**
  * @details Metodo que calcula insertar Una Figura en una posicion en una matriz dada
@@ -204,7 +201,8 @@ output_data_t *output_data, char **current_status, int rot) {
  * actualiza el output_data
  *
  */
-void validate_insert_figure(private_data_t *private_data,  figure_t *figure) {
+void validate_insert_figure(private_data_t *private_data,  figure_t *figure,
+size_t col) {
     // Generar un tablero temporal para la insercion de la Figura
     char **temp =
         set_game_state(private_data->current_status,
@@ -213,9 +211,9 @@ void validate_insert_figure(private_data_t *private_data,  figure_t *figure) {
     printf("\nRealizando cálculo de inserción ...\n");
 
     // Se recorre Primero las columnas
-    for (size_t j = private_data->thread_num;
-        j < private_data->input_data->columns;
-        j = j + private_data->thread_num) {
+    for (size_t j = col;
+        j < private_data->input_data->columns; j++) {
+        printf("Columna [%zu]\n", j);
         size_t invalid_column = 0;
         bool finish = false;
 
@@ -374,7 +372,7 @@ void* run(void* data) {
         print_char_matrix(figure->value, figure->height,
                           figure->width);
         // Intenta colocar la Figura en la mejor posicion
-        validate_insert_figure(private_data, figure);
+        insert_by_col(private_data, figure);
     }
 
     return NULL;
