@@ -162,6 +162,7 @@ void update_game_board(output_data_t *output_data, char** table, int rot) {
 
     if (new_score > current_score) {
         output_data->rotation = rot;
+        output_data->figure_count++;
         output_data->table =
             clone_game_state(table, output_data->table, output_data->rows,
                 output_data->columns);

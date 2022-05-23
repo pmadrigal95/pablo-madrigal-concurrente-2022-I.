@@ -55,8 +55,7 @@ bool set_figure(input_data_t *input_data, size_t current_profundity,
 void insert_by_col(figure_t *figure, input_data_t *input_data,
 output_data_t *output_data, char **current_status, int rot);
 
-void validate_insert_figure(figure_t *figure, input_data_t *input_data,
-output_data_t *output_data, char **current_status, size_t col, int rot);
+void validate_insert_figure(private_data_t *private_data,  figure_t *figure);
 
 void update_current_status(input_data_t *input_data, output_data_t *output_data,
                            size_t current_profundity);
@@ -159,30 +158,13 @@ bool set_figure(input_data_t *input_data, size_t current_profundity,
     create_threads(input_data, output_data, current_status,
     num_rotations, current_profundity, thread_count);
 
-    // Realizar intentos por rotacion y por figura
-    /*for (int rot = 0; rot < num_rotations; rot++) {
-        // Obtener Figura y su rotacion actual
-        figure_t *figure =
-            get_tetris_figure(input_data->next_figures[current_profundity],
-                              rot);
-
-        printf("Altura [%d], Ancho [%d]\n",
-               figure->height, figure->width);
-
-        // Imprimir la Figura actual
-        print_char_matrix(figure->value, figure->height,
-                          figure->width);
-        // Intenta colocar la Figura en la mejor posicion
-        insert_by_col(figure, input_data, output_data, current_status, rot);
-    }
-
     if (output_data->figure_count > 0) {
         update_current_status(input_data, output_data, current_profundity);
         result = true;
     } else {
         printf("No se pueden colocar mas figuras, Fin del Juego!\n");
         result = false;
-    }*/
+    }
 
     // Liberar memoria del estado previo a la figura
     free_matrix(input_data->rows, (void **)current_status);
@@ -205,13 +187,13 @@ void update_current_status(input_data_t *input_data, output_data_t *output_data,
                             input_data->next_figures[current_profundity]);
 }
 
-void insert_by_col(figure_t *figure, input_data_t *input_data,
+/*void insert_by_col(figure_t *figure, input_data_t *input_data,
 output_data_t *output_data, char **current_status, int rot) {
     for (size_t col = 0; col < input_data->columns; col++) {
         validate_insert_figure(figure, input_data, output_data,
                                current_status, col, rot);
     }
-}
+}*/
 
 /**
  * @details Metodo que calcula insertar Una Figura en una posicion en una matriz dada
@@ -222,31 +204,31 @@ output_data_t *output_data, char **current_status, int rot) {
  * actualiza el output_data
  *
  */
-void validate_insert_figure(figure_t *figure, input_data_t *input_data,
-output_data_t *output_data, char **current_status, size_t col, int rot) {
+void validate_insert_figure(private_data_t *private_data,  figure_t *figure) {
     // Generar un tablero temporal para la insercion de la Figura
     char **temp =
-        set_game_state(current_status, input_data->rows,
-                       input_data->columns);
+        set_game_state(private_data->current_status,
+        private_data->input_data->rows, private_data->input_data->columns);
 
     printf("\nRealizando cálculo de inserción ...\n");
 
     // Se recorre Primero las columnas
-    for (size_t j = col; j < input_data->columns; j++) {
-        col++;
+    for (size_t j = private_data->thread_num;
+        j < private_data->input_data->columns;
+        j = j + private_data->thread_num) {
         size_t invalid_column = 0;
         bool finish = false;
 
         // Validacion de espacio
-        for (size_t i = 0; i < input_data->rows; i++) {
-            if (i + figure->height > input_data->rows) {
+        for (size_t i = 0; i < private_data->input_data->rows; i++) {
+            if (i + figure->height > private_data->input_data->rows) {
                 printf("[Alto]\n");
                 printf("La Figura no calza en el tablero del juego!\n");
                 return;
             }
 
             // Validacion de espacio
-            if (j + figure->width > input_data->columns) {
+            if (j + figure->width > private_data->input_data->columns) {
                 printf("[Ancho]\n");
                 printf("La Figura no calza en el tablero del juego!\n");
                 return;
@@ -264,7 +246,7 @@ output_data_t *output_data, char **current_status, size_t col, int rot) {
                 invalid_column++;
                 break;
             } else if (
-                (i + figure->height < input_data->rows
+                (i + figure->height < private_data->input_data->rows
                 && temp[i + figure->height][j] == '0')) {
                 /* Se verifica si puede seguir cayendo,
                  * y se valida que la siguiente fila tenga espacio antes de cambiar de fila
@@ -286,13 +268,12 @@ output_data_t *output_data, char **current_status, size_t col, int rot) {
             }
 
             // Matriz resultante luego del intento
-            print_char_matrix(temp, input_data->rows,
-                              input_data->columns);
+            print_char_matrix(temp, private_data->input_data->rows,
+                              private_data->input_data->columns);
 
             // Valida si debe actualizar la partida del juego
-            update_game_board(output_data, temp, rot);
-
-            output_data->figure_count++;
+            update_game_board(private_data->output_data, temp,
+            private_data->num_rotations);
 
             finish = true;
 
@@ -306,7 +287,7 @@ output_data_t *output_data, char **current_status, size_t col, int rot) {
         /* si no logro colocar la pieza y ya no hay tablero de juego
          * Se muestra un error
          */
-        if (invalid_column == input_data->columns) {
+        if (invalid_column == private_data->input_data->columns) {
             printf("[invalid_column]\n");
             printf("La Figura no calza en el tablero del juego!\n");
             return;
@@ -314,9 +295,8 @@ output_data_t *output_data, char **current_status, size_t col, int rot) {
     }
 
     // Libera la memoria
-    free_matrix(input_data->rows, (void **)temp);
+    free_matrix(private_data->input_data->rows, (void **)temp);
 }
-
 
 void create_threads(input_data_t *input_data, output_data_t *output_data,
 char **current_status, int num_rotations, size_t current_profundity,
@@ -351,8 +331,6 @@ char **current_status, int num_rotations, size_t current_profundity,
         free(threads);
         free(private_data);
 
-        printf("columnas finales %zu\n", output_data->columns);
-
     } else {
         fprintf(stderr, "Unable to allocate memory for %zu threads\n",
             thread_count);
@@ -361,15 +339,24 @@ char **current_status, int num_rotations, size_t current_profundity,
 }
 
 void* run(void* data) {
-    const private_data_t *private_data = (private_data_t *)data;
+    private_data_t *private_data = (private_data_t *)data;
 
-    printf("columnas %zu\n",
-           private_data->output_data->columns);
+    // Realizar intentos por rotacion y por figura
+    for (int rot = 0; rot < private_data->num_rotations; rot++) {
+        // Obtener Figura y su rotacion actual
+        figure_t *figure =
+            get_tetris_figure(private_data->input_data->next_figures
+            [private_data->current_profundity], rot);
 
-    private_data->output_data->columns = 1;
+        printf("Altura [%d], Ancho [%d]\n",
+               figure->height, figure->width);
 
-    printf("thread_num %zu\n",
-           private_data->thread_num);
+        // Imprimir la Figura actual
+        print_char_matrix(figure->value, figure->height,
+                          figure->width);
+        // Intenta colocar la Figura en la mejor posicion
+        validate_insert_figure(private_data, figure);
+    }
 
     return NULL;
 }
