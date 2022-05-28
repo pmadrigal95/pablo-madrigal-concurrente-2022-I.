@@ -33,7 +33,7 @@ Si requieres utilizar hilos, puedes utilizar el siguiente comando ./tetris_solve
 
 Si no pone ningún parámetro al comando relacionado a hilos ./tetris_solver_pthreads, la tarea utilizará por defecto el valor sysconf(_SC_NPROCESSORS_ONLN);
 
-![2-2-2](2-2-2.PNG.PNG)
+![2-2-2](2-2-2.PNG)
 
 Resultados
 
