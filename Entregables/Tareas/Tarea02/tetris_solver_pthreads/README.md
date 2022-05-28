@@ -109,7 +109,7 @@ Si para un estado dado, el programa no puede encontrar del todo una posición va
 
 Por favor revisar folder de guide, ya que se encuentran screenshots de los pasos mencionados.
 
-1. Ejecutar los siguientes comandos en el root de la tarea (pablo-madrigal-concurrente-2022-I./Entregables/Tareas/Tarea01/tetris_solver_serial)
+1. Ejecutar los siguientes comandos en el root de la tarea (pablo-madrigal-concurrente-2022-I./Entregables/Tareas/Tarea02/tetris_solver_pthreads)
     1. make clean
     1. make
         1. Puede utilizar make con alguno de los siguientes sanitazers asan, msan, tsan, ubsan. Por ejemplo: make msan
@@ -118,14 +118,16 @@ Por favor revisar folder de guide, ya que se encuentran screenshots de los pasos
 
 Por favor revisar folder de guide, ya que se encuentran screenshots de los pasos mencionados.
 
-1. Ejecutar el siguiente comando en la carpeta bin de la tarea (pablo-madrigal-concurrente-2022-I./Entregables/Tareas/Tarea01/tetris_solver_serial/bin)
+1. Ejecutar el siguiente comando en la carpeta bin de la tarea (pablo-madrigal-concurrente-2022-I./Entregables/Tareas/Tarea02/tetris_solver_pthreads/bin)
     1. Puede utilizar el comando *cd bin* para llegar a la carpeta correspondiente desde el root de la tarea
-    1.  Comando en la carpeta bin: ./tetris_solver_serial
+    1.  Comando en la carpeta bin: ./tetris_solver_pthreads
         1. Puede utilizar make con alguno de los siguientes sanitazers asan, msan, tsan, ubsan. Por ejemplo: make msan
-    1. Si no pone ningún parámetro al comando ./tetris_solver_serial, la tarea utilizará por defecto el siguiente archivo -> "../test/test01.txt"
+    1. Si no pone ningún parámetro al comando ./tetris_solver_pthreads, la tarea utilizará por defecto el siguiente archivo -> "../test/test01.txt"
     1. Si requiere utilizar otro archivo de prueba realizar estos pasos:
         1. Coloque su archivo txt en la carpeta test
-        1. Ejecute en la consola el comando ./tetris_solver_serial "archivo txt" (recuerde estar en la carpeta bin, ya que el ejecutable se encuentra en esa carpeta)
+        1. Ejecute en la consola el comando ./tetris_solver_pthreads "archivo txt" (recuerde estar en la carpeta bin, ya que el ejecutable se encuentra en esa carpeta)
+    1. Si requieres utilizar hilos, puedes utilizar el siguiente comando ./tetris_solver_pthreads "../test/test01.txt" {Cantidad de hilos}
+        1. Si no pone ningún parámetro al comando relacionado a hilos ./tetris_solver_pthreads, la tarea utilizará por defecto el valor sysconf(_SC_NPROCESSORS_ONLN);
 
 ### Resultado
 
@@ -135,7 +137,6 @@ De acuerdo a la profundidad configurada la tarea generará un archivo .txt por c
 
 1. asan : dynamic-stack-buffer-overflow scanf_common
 1. tsan : ThreadSanitizer: heap-use-after-free
-1. El archivo src/game_logic_alter.txt contiene logica necesaria para realizar todas la combinaciones posibles, pero su limitante es realizar hasta un maximo de profundidad 4 y los archivos txt no son tan precisos.
 
 ## Créditos
 
