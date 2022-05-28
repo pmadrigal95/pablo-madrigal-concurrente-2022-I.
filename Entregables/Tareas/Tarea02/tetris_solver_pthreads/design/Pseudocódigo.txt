@@ -1,0 +1,40 @@
+Archivo tetris_solver_pthreads.c
+
+1. Inicio
+2. Se inicializa el puntero filename
+3. Se inicializa la variable thread_count
+4. Leer parametros de entrada
+5. Asignar memoria dinamica para input_data
+6. void get_input_data(filename, input_data);
+    Asignar valores del txt a la estructura input_data
+    Se valida la calidad de la informacion que viene en el archivo txt de entrada
+7. next_play(input_data, thread_count);
+    initial_status(input_data, thread_count);
+        Valida que la cantidad de Hilos no sea mayor a la cantidad de columnas del tablero del juego
+        con el objetivo de no tener hilos que no realicen nada
+        Se imprime en pantalla el estado actual de la partida
+    calculate_next_figure_recursive(input_data, 0, thread_count);
+        Metodo recursivo que se va a ejecutar recursivamente hasta que cumpla la profundidad requerida
+        Obtiene siguiente Figura
+        Obtiene numero de rotaciones de dicha Figura
+        bool result = set_figure(input_data, current_profundity, num_rotations, thread_count)
+            Metodo que calcula insertar las Figuras y devuelve si logro insertar la pieza en tablero de juego
+            clona estado del tablero actual para realizar los calculos
+            create_output_data(input_data, output_data, current_status)
+                Inicializa la estructura de salida esperada por el programa
+            create_threads(input_data, output_data, current_status, num_rotations, current_profundity, thread_count)
+                Metodo que crea los hilos a utilizar en el sistema
+                Asigna valores a las estructuras private_data & shared_data y ejecuta el metodo run
+            void* run(void* data)
+                Metodo que ejecuta cada hilo para realizar el intento de insertar por rotacion
+            insert_by_col(private_data, figure)
+                Metodo que envia a los hilos a intentar insertar en una columna especifica
+                Mapeo Ciclico por columna
+            validate_insert_figure(private_data_t *private_data,  figure_t *figure, size_t col)
+                Metodo que calcula insertar Una Figura en una posicion en una matriz dada
+                Valida si la jugada tiene mas puntos que la actual y actualiza el output_data
+        Valida si logro insertar al menos una Figura y genera el txt de la profundidad actual
+        write_output_data(char *filename, output_data_t *output_data)
+            Metodo que se encarga de generar un txt de Salida con la informacion generada por Figura
+8. Fin
+

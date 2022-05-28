@@ -101,6 +101,14 @@ void next_play(input_data_t *input_data, size_t thread_count) {
  * Private Methods
  */
 
+/**
+ * @details Metodo Recursivo que recorre la profundidad
+ * @param input_data_t *input_data
+ * @param size_t current_profundity
+ * @param size_t thread_count
+ * @return Realiza calculo por profundidad
+ *
+ */
 void calculate_next_figure_recursive(input_data_t *input_data,
 size_t current_profundity, size_t thread_count) {
     printf("\nSiguiente Figura [%c]\n",
@@ -183,6 +191,13 @@ void update_current_status(input_data_t *input_data, output_data_t *output_data,
                             input_data->next_figures[current_profundity]);
 }
 
+/**
+ * @details Metodo que envia a los hilos a intentar insertar en una columna especifica
+ * @param private_data_t *private_data
+ * @param figure_t *figure
+ * @return Mapeo Ciclico por columna
+ *
+ */
 void insert_by_col(private_data_t *private_data,  figure_t *figure) {
     // Mapeo Ciclico
     for (size_t col = private_data->thread_num;
@@ -299,6 +314,17 @@ size_t col) {
     free_matrix(private_data->input_data->rows, (void **)temp);
 }
 
+/**
+ * @details Metodo que crea los hilos a utilizar en el sistema
+ * @param input_data_t *input_data
+ * @param output_data_t *output_data
+ * @param char **current_status
+ * @param int num_rotations
+ * @param size_t current_profundity
+ * @param size_t thread_count
+ * @return Asigna valores a las estructuras private_data & shared_data y ejecuta el metodo run
+ *
+ */
 void create_threads(input_data_t *input_data, output_data_t *output_data,
 char **current_status, int num_rotations, size_t current_profundity,
  size_t thread_count) {
@@ -355,6 +381,12 @@ char **current_status, int num_rotations, size_t current_profundity,
     }
 }
 
+/**
+ * @details Metodo que ejecuta cada hilo para realizar el intento de insertar por rotacion
+ * @param void* data
+ * @return Metodo que ejecuta cada hilo para realizar el intento de insertar por rotacion
+ *
+ */
 void* run(void* data) {
     private_data_t *private_data = (private_data_t *)data;
 
