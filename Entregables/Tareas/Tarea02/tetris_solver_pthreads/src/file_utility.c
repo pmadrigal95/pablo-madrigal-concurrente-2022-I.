@@ -79,21 +79,10 @@ void get_input_data(char *filename, input_data_t *input_data) {
  *
  */
 void generate_output_file(size_t profundity, output_data_t *output_data) {
-    char filename[] = "tetris_play_X.txt";
-    char charValue = profundity+'0';
-    int i = 0;
+    char filename[50];
 
-    /**
-     * @details Reemplaza el Caracter X por el nombre apropiado de la profundidad 
-     * @return nombre apropiado de la profundidad 
-     *
-     */
-    while (filename[i] != '\0') {
-        if (filename[i] == 'X') {
-            filename[i] = charValue;
-        }
-        i++;
-    }
+    sprintf(filename, "tetris_play_%zu.txt", profundity);
+
 
     char *filename_pt = filename;
 
