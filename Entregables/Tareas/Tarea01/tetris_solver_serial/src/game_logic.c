@@ -1,9 +1,12 @@
 // Copyright 2022 Pablo Madrigal <PABLO.MADRIGALRAMIREZ@ucr.ac.cr>
+// This line is only for Visual Studio Code to recognize CLOCK_MONOTONIC
+#define _POSIX_C_SOURCE 199309L
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <pthread.h>
 #include "game_logic.h"
 #include "file_utility.h"
 #include "matrix_utility.h"
@@ -86,6 +89,10 @@ int review_space(figure_t *figure, char **temp,
  *
  */
 void next_play(input_data_t *input_data) {
+    struct timespec start_time;
+        clock_gettime(/*clk_id*/ CLOCK_MONOTONIC, &start_time);
+
+
     output_data_t *output_data = (output_data_t *)calloc(1,
                                                 sizeof(output_data_t));
     initial_status(input_data, output_data);
@@ -98,6 +105,14 @@ void next_play(input_data_t *input_data) {
     free_array((void **)input_data->next_figures);
     free_matrix(output_data->rows, (void **)output_data->table);
     free(output_data);
+
+    struct timespec finish_time;
+    clock_gettime(/*clk_id*/ CLOCK_MONOTONIC, &finish_time);
+
+    double elapsed = (finish_time.tv_sec - start_time.tv_sec) +
+                         (finish_time.tv_nsec - start_time.tv_nsec) * 1e-9;
+
+    printf("execution time: %.9lfs\n", elapsed);
 }
 
 

@@ -1,4 +1,6 @@
 // Copyright 2022 Pablo Madrigal <PABLO.MADRIGALRAMIREZ@ucr.ac.cr>
+// This line is only for Visual Studio Code to recognize CLOCK_MONOTONIC
+#define _POSIX_C_SOURCE 199309L
 
 #include <errno.h>
 #include <stdio.h>
