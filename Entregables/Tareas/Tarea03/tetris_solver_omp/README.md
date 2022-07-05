@@ -103,9 +103,14 @@ I
 
 Si para un estado dado, el programa no puede encontrar del todo una posición valida para colocar la figura correspondiente al nivel, entonces **no** se debe generar ningún archivo de salida para dicho nivel ni para los siguientes. Los archivos de salida deben contener únicamente estados válidos.
 
+### Reporte
+
+[Reporte](./report)
+
+
 ## Manual de Usuario
 
-### Compilar Tarea 01
+### Compilar Tarea 03
 
 Por favor revisar folder de guide, ya que se encuentran screenshots de los pasos mencionados.
 
