@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "game_logic.h"
-#include "game_logic_utility.h"
+#include "./game_logic.h"
+#include "./game_logic_utility.h"
 
 /*
  * game_logic_utility.h
@@ -41,26 +41,30 @@ int review_space(figure_t *figure, char **temp,
  */
 
 void calculate_next_figure_recursive(input_data_t *input_data,
-size_t current_profundity, size_t thread_count);
+                                     size_t current_profundity,
+                                     size_t thread_count);
 
 bool set_figure(input_data_t *input_data, size_t current_profundity,
                 int num_rotations, size_t thread_count);
 
 void insert_by_col(input_data_t *input_data, output_data_t *output_data,
-char **current_status, int num_rotations, figure_t *figure);
+                   char **current_status, int num_rotations, figure_t *figure,
+                   size_t thread_count);
 
 void validate_insert_figure(input_data_t *input_data,
-output_data_t *output_data, char **current_status, int num_rotations,
-figure_t *figure, size_t col);
+                            output_data_t *output_data,
+                            char **current_status, int num_rotations,
+                            figure_t *figure, size_t col);
 
 void update_current_status(input_data_t *input_data, output_data_t *output_data,
                            size_t current_profundity);
 
 void create_threads(input_data_t *input_data, output_data_t *output_data,
-char **current_status, int num_rotations, size_t current_profundity,
- size_t thread_count);
+                    char **current_status, int num_rotations,
+                    size_t current_profundity,
+                    size_t thread_count);
 
-//void* run(void*);
+// void* run(void*);
 
 /*
  * Public Methods
@@ -84,12 +88,11 @@ void next_play(input_data_t *input_data, size_t thread_count) {
 
     double end_time = omp_get_wtime();
 
-
     free_matrix(input_data->rows, (void **)input_data->table);
     free(input_data);
     free_array((void **)input_data->next_figures);
 
-    printf("execution time: %.9lfs\n", (end_time- start_time));
+    printf("execution time: %.9lfs\n", (end_time - start_time));
 }
 
 /*
@@ -118,7 +121,7 @@ size_t current_profundity, size_t thread_count) {
            input_data->next_figures[current_profundity], num_rotations);
 
     bool result = set_figure(input_data, current_profundity,
-    num_rotations, thread_count);
+                             num_rotations, thread_count);
 
     if (current_profundity < input_data->profundity && result == true) {
         calculate_next_figure_recursive(input_data,
@@ -155,7 +158,7 @@ bool set_figure(input_data_t *input_data, size_t current_profundity,
      * Crear Hilos
      */
     create_threads(input_data, output_data, current_status,
-    num_rotations, current_profundity, thread_count);
+                   num_rotations, current_profundity, thread_count);
 
     if (output_data->figure_count > 0) {
         update_current_status(input_data, output_data, current_profundity);
@@ -194,14 +197,17 @@ void update_current_status(input_data_t *input_data, output_data_t *output_data,
  *
  */
 void insert_by_col(input_data_t *input_data, output_data_t *output_data,
-char **current_status, int num_rotations, figure_t *figure) {
-    #pragma omp for
+                   char **current_status, int num_rotations, figure_t *figure,
+                   size_t thread_count) {
+    omp_set_num_threads(thread_count);
+// declaramos una region paralela
+#pragma omp parallel for schedule(static, 1)
     // Mapeo Ciclico
-    for (size_t col = omp_get_thread_num();
-    col < input_data->columns;
-    col = col + omp_get_num_threads()) {
+    for (size_t col = 0;
+         col < input_data->columns;
+         col++) {
         validate_insert_figure(input_data, output_data,
-        current_status, num_rotations, figure, col);
+                               current_status, num_rotations, figure, col);
     }
 }
 
@@ -215,8 +221,9 @@ char **current_status, int num_rotations, figure_t *figure) {
  *
  */
 void validate_insert_figure(input_data_t *input_data,
-output_data_t *output_data, char **current_status, int num_rotations,
-figure_t *figure, size_t col) {
+                            output_data_t *output_data, char **current_status,
+                            int num_rotations,
+                            figure_t *figure, size_t col) {
     // Generar un tablero temporal para la insercion de la Figura
     char **temp =
         set_game_state(current_status, input_data->rows, input_data->columns);
@@ -225,7 +232,7 @@ figure_t *figure, size_t col) {
 
     // Se recorre Primero las columnas
     for (size_t j = col;
-        j < input_data->columns; j++) {
+         j < input_data->columns; j++) {
         printf("Columna [%zu]\n", j);
         size_t invalid_column = 0;
         bool finish = false;
@@ -257,8 +264,8 @@ figure_t *figure, size_t col) {
                 invalid_column++;
                 break;
             } else if (
-                (i + figure->height < input_data->rows
-                && temp[i + figure->height][j] == '0')) {
+                (i + figure->height < input_data->rows &&
+                temp[i + figure->height][j] == '0')) {
                 /* Se verifica si puede seguir cayendo,
                  * y se valida que la siguiente fila tenga espacio antes de cambiar de fila
                  */
@@ -285,7 +292,7 @@ figure_t *figure, size_t col) {
             #pragma omp critical
             {
                 update_game_board(output_data, temp,
-                num_rotations);
+                                  num_rotations);
             }
 
             finish = true;
@@ -323,26 +330,24 @@ figure_t *figure, size_t col) {
  *
  */
 void create_threads(input_data_t *input_data, output_data_t *output_data,
-char **current_status, int num_rotations, size_t current_profundity,
- size_t thread_count) {
-    omp_set_num_threads(thread_count);
-// declaramos una region paralela
-#pragma omp parallel
-    {
-        for (int rot = 0; rot < num_rotations; rot++) {
-         // Obtener Figura y su rotacion actual
-         figure_t *figure =
-             get_tetris_figure(input_data->next_figures
-             [current_profundity], rot);
+                    char **current_status, int num_rotations,
+                    size_t current_profundity,
+                    size_t thread_count) {
+    for (int rot = 0; rot < num_rotations; rot++) {
+        // Obtener Figura y su rotacion actual
+        figure_t *figure =
+            get_tetris_figure(input_data->next_figures
+                                  [current_profundity],
+                              rot);
 
-         printf("Altura [%d], Ancho [%d]\n",
-                figure->height, figure->width);
+        printf("Altura [%d], Ancho [%d]\n",
+               figure->height, figure->width);
 
         // Imprimir la Figura actual
         print_char_matrix(figure->value, figure->height,
                           figure->width);
         // Intenta colocar la Figura en la mejor posicion
         insert_by_col(input_data, output_data,
-                      current_status, num_rotations, figure);
-     }
+                      current_status, num_rotations, figure, thread_count);
     }
+}

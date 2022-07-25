@@ -6,8 +6,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <sys/stat.h>
-#include "file_utility.h"
-#include "matrix_utility.h"
+#include "./file_utility.h"
+#include "./matrix_utility.h"
 
 #define INVALID_VALUE -1
 
@@ -214,7 +214,8 @@ void assign_incomming_array(FILE *in_file, input_data_t *input_data) {
         for (size_t i = 0; i < input_data->number_of_figures; i++) {
             fscanf(in_file, "%s", &input_data->next_figures[i]);
 
-            bool result = validate_number(input_data->next_figures[i], VALIDATE_FIGURE);
+            bool result = validate_number
+            (input_data->next_figures[i], VALIDATE_FIGURE);
                 if (result == false) {
                     print_error_message(input_data, FREE_ALL);
                 }

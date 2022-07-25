@@ -3,7 +3,7 @@
 #ifndef SRC_FILE_UTILITY_H_
 #define SRC_FILE_UTILITY_H_
 
-#include "structures.h"
+#include "./structures.h"
 
 /**
  * @brief Metodo que se encarga de leer un txt de entrada y almacena la informacion en memoria

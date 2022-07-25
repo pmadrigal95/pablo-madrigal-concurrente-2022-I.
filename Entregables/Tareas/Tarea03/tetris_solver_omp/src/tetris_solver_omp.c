@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "structures.h"
-#include "game_logic.h"
-#include "file_utility.h"
+#include "./structures.h"
+#include "./game_logic.h"
+#include "./file_utility.h"
 
 /**
 * Imports Utilities
