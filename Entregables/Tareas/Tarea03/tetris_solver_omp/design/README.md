@@ -59,10 +59,6 @@ Lluvia de ideas, de como se podria abarcar el problema y como se podria resolver
 
 ![Idea General del Proceso2](newIdeas.PNG)
 
-## Comparacion
-
-Como podemos apreciar previamente en los diagramas en la tarea 3 se sigue la tendencia de la la implementacion de la tarea #2, pero si tener que crear estructuras para la informacion privada y compartida que es requerida con pthreads, la tarea #3 utiliza la misma solucion con la tecnologia openMP.
-
 ## Diagrama UML
 
 Structs utilizados en la tarea
@@ -70,6 +66,11 @@ Structs utilizados en la tarea
 ![Diagrama UML](UML.jpeg)
 
 ![Diagrama UML2](newStructures.jpeg)
+
+## Comparacion
+
+Como podemos apreciar previamente en los diagramas en la tarea 3 se sigue la tendencia de la la implementacion de la tarea #2, pero si tener que crear estructuras para la informacion privada y compartida que es requerida con pthreads, la tarea #3 utiliza la misma solucion con la tecnologia openMP.
+
 
 ### Reporte Sanitizers
 

@@ -87,13 +87,122 @@ Se decide a utilizar el maximo de hilos para esta prueba
 
 ### Gráficos
 
-![Idea General del Proceso2](Usando_un_solo_hilo.PNG)
+En la siguiente comparativa utilizamos 1 hilo, es decir la version seria los resultados fueron los siguientes:
+En la tarea #01 los tiempos fueron los siguientes:
 
-![Idea General del Proceso2](3Hilos.PNG)
+| Hilos           | Tiempo              |
+|-----------------|---------------------|
+| 1               | 0.036038181         |
+| 1               | 0.036945317         |
+| 1               | 0.049056329         |
 
-![Idea General del Proceso2](6_nucleos.PNG)
+En la tarea #02 los tiempos fueron los siguientes:
 
-![Idea General del Proceso2](9Hilos.PNG)
+| Hilos           | Tiempo              |
+|-----------------|---------------------|
+| 1               | 0.047032499         |
+| 1               | 0.057867294         |
+| 1               | 0.067376366         |
+
+En la tarea #03 los tiempos fueron los siguientes:
+
+| Hilos           | Tiempo              |
+|-----------------|---------------------|
+| 1               | 0.031469201         |
+| 1               | 0.036286867         |
+| 1               | 0.053641616         |
+
+Y por ende el speedup fue el siguiente:
+
+| Tarea           | Mejor Tiempo        | SpeedUp             |
+|-----------------|---------------------|---------------------|
+| Tarea 1         | 0.036038181s        |           1         |
+| Tarea 2         | 0.047032499s        |         0.766       |
+| Tarea 3         | 0.031469201s        |  1.145              |
+
+![1 Hilo](Usando_un_solo_hilo.PNG)
+
+En la siguiente comparativa utilizamos 3 hilo, es decir la version concurrente los resultados fueron los siguientes:
+En la tarea #1 no aplican
+
+En la tarea #02 los tiempos fueron los siguientes:
+
+| Hilos           | Tiempo              |
+|-----------------|---------------------|
+| 3               | 0.058487965         |
+| 3               | 0.062490211         |
+| 3               | 0.063110759         |
+
+En la tarea #03 los tiempos fueron los siguientes:
+
+| Hilos           | Tiempo              |
+|-----------------|---------------------|
+| 3               | 0.068377078         |
+| 3               | 0.178990227         |
+| 3               | 0.064563813         |
+
+Y por ende el speedup fue el siguiente:
+
+| Tarea           | Mejor Tiempo        | SpeedUp             |
+|-----------------|---------------------|---------------------|
+| Tarea 2         | 0.058487965s        |        0.6161       |
+| Tarea 3         | 0.064563813s        |  0.55817            |
+
+![3 Hilos](3Hilos.PNG)
+
+En la siguiente comparativa utilizamos 6 hilo, es decir la version concurrente los resultados fueron los siguientes:
+En la tarea #1 no aplican
+
+En la tarea #02 los tiempos fueron los siguientes:
+
+| Hilos           | Tiempo              |
+|-----------------|---------------------|
+| 6               |0.046441231          |
+| 6               | 0.105808688         |
+| 6               | 0.070724465         |
+
+En la tarea #03 los tiempos fueron los siguientes:
+
+| Hilos           | Tiempo              |
+|-----------------|---------------------|
+| 6               | 0.449816702         |
+| 6               | 0.454873672         |
+| 6               | 0.613349046         |
+
+Y por ende el speedup fue el siguiente:
+
+| Tarea           | Mejor Tiempo        | SpeedUp             |
+|-----------------|---------------------|---------------------|
+| Tarea 2         | 0.046441231s        |        0.775        |
+| Tarea 3         | 0.449816702s        |  0.080              |
+
+![6 Hilos](6_nucleos.PNG)
+
+En la siguiente comparativa utilizamos 9 hilo, es decir la version concurrente los resultados fueron los siguientes:
+En la tarea #1 no aplican
+
+En la tarea #02 los tiempos fueron los siguientes:
+
+| Hilos           | Tiempo              |
+|-----------------|---------------------|
+| 9               |0.094061226          |
+| 9               | 0.075957138         |
+| 9               | 0.06993543          |
+
+En la tarea #03 los tiempos fueron los siguientes:
+
+| Hilos           | Tiempo              |
+|-----------------|---------------------|
+| 9               | 0.05929097          |
+| 9               | 0.059518879         |
+| 9               | 0.057286138         |
+
+| Tarea           | Mejor Tiempo        | SpeedUp             |
+|-----------------|---------------------|---------------------|
+| Tarea 2         | 0.069935430s        |        0.5153       |
+| Tarea 3         |  0.057286138s       |  0.629              |
+
+![9 Hilos](9Hilos.PNG)
 
 
 ### Conclusiones
