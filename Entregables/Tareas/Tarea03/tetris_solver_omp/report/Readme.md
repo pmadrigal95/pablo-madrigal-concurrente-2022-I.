@@ -85,6 +85,16 @@ Se decide a utilizar el maximo de hilos para esta prueba
 | Tarea 3         |  0.057286138s       |  0.629              |
 
 
+### Gráficos
+
+![Idea General del Proceso2](Usando_un_solo_hilo.PNG)
+
+![Idea General del Proceso2](3Hilos.PNG)
+
+![Idea General del Proceso2](6_nucleos.PNG)
+
+![Idea General del Proceso2](9Hilos.PNG)
+
 
 ### Conclusiones
 
