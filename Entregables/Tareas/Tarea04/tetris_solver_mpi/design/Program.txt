@@ -1,0 +1,235 @@
+﻿// See https://aka.ms/new-console-template for more information
+
+int[,] matrizInicial = new int[10, 10]
+    {
+        {0,0,0,0,0,0,0,0,0,0 },
+        {0,0,0,0,0,0,0,0,0,0 },
+        {1,1,1,1,1,1,1,1,1,0 },
+        {0,0,0,0,0,0,0,0,0,0 },
+        {0,0,0,0,0,0,0,0,0,0 },
+        {0,0,0,0,0,0,0,0,0,0 },
+        {0,0,0,0,0,0,0,0,0,0 },
+        {0,0,0,0,0,0,0,0,0,0 },
+        {0,0,0,0,0,0,0,0,0,0 },
+        {0,0,0,0,0,0,0,0,0,0 }
+    };
+
+int[] matrizFigura1 = new int[2] { 4, 1 };
+int[] matrizFigura2 = new int[2] { 2, 2 };
+int[,] matrizFigura3 = new int[2, 3] { { 0, 1, 1 }, { 1, 1, 0 } };
+
+
+for (int i = 0; i < matrizInicial.GetLength(0); i++)
+{
+    for (int j = 0; j < matrizInicial.GetLength(1); j++)
+    {
+        Console.Write(matrizInicial[i, j]);
+    }
+
+    Console.WriteLine();
+}
+
+Console.WriteLine("Inicio Figura 1");
+int columna = 0;
+for (int i = 0; i < matrizInicial.GetLength(0); i++)
+{
+    int columnaMala = 0;
+    bool terminar = false;
+    for (int j = columna; j < matrizInicial.GetLength(1); j++)
+    {
+        if (i + matrizFigura1[0] > matrizInicial.GetLength(0))
+        {
+            Console.WriteLine("No cabe la pieza");
+            return;
+        }
+
+        if (j + matrizFigura1[1] > matrizInicial.GetLength(1))
+        {
+            Console.WriteLine("No cabe la pieza por gorda");
+            return;
+        }
+
+        int sum = 0;
+
+        for (int k = 0; k < matrizFigura1[0]; k++)
+        {
+            for (int l = 0; l < matrizFigura1[1]; l++)
+            {
+                sum += matrizInicial[i+k, j+l];
+            }
+        }
+
+        if (sum > 0)
+        {
+            columnaMala++;
+            columna++;
+            continue;
+        }
+        else if (i + matrizFigura1[0] <  matrizInicial.GetLength(0) &&  matrizInicial[i + matrizFigura1[0], j] == 0)
+        {
+            continue;
+        }
+
+        for (int m = 0; m < matrizFigura1[0]; m++)
+        {
+            for (int n = 0; n < matrizFigura1[1]; n++)
+            {
+                matrizInicial[i+m, j+n] = 1;
+            }
+        }
+
+        terminar = true;
+
+        break;
+    }
+
+    if (terminar)
+    {
+        break;
+    }
+
+    if (columnaMala == matrizInicial.GetLength(1))
+    {
+        Console.WriteLine("No cabe la pieza");
+        return;
+    }
+}
+
+for (int i = 0; i < matrizInicial.GetLength(0); i++)
+{
+    for (int j = 0; j < matrizInicial.GetLength(1); j++)
+    {
+        Console.Write(matrizInicial[i, j]);
+    }
+
+    Console.WriteLine();
+}
+Console.WriteLine("Fin Figura 1");
+
+//Console.WriteLine("Inicio Figura 2");
+//for (int i = 0; i < matrizInicial.GetLength(0); i++)
+//{
+//    bool terminar = false;
+//    for (int j = 0; j < matrizInicial.GetLength(1); j++)
+//    {
+//        if (i + matrizFigura2[0] > matrizInicial.GetLength(0))
+//        {
+//            Console.WriteLine("No cabe la pieza");
+//            return;
+//        }
+
+//        int sum = 0;
+
+//        for (int k = 0; k < matrizFigura2[0]; k++)
+//        {
+//            for (int l = 0; l < matrizFigura2[1]; l++)
+//            {
+//                sum += matrizInicial[i+k, j+l];
+//            }
+//        }
+
+
+
+//        if (sum > 0)
+//        {
+//            continue;
+//        }
+
+//        for (int m = 0; m < matrizFigura2[0]; m++)
+//        {
+//            for (int n = 0; n < matrizFigura2[1]; n++)
+//            {
+//                matrizInicial[i+m, j+n] = 2;
+//            }
+//        }
+
+//        terminar = true;
+
+//        break;
+//    }
+
+//    if (terminar)
+//    {
+//        break;
+//    }
+//}
+
+//for (int i = matrizInicial.GetLength(0) -1; i >= 0; i--)
+//{
+//    for (int j = matrizInicial.GetLength(1) -1; j >= 0; j--)
+//    {
+//        Console.Write(matrizInicial[i, j]);
+//    }
+
+//    Console.WriteLine();
+//}
+//Console.WriteLine("Fin Figura 2");
+
+//Console.WriteLine("Inicio Figura 3");
+//for (int i = 0; i < matrizInicial.GetLength(0); i++)
+//{
+//    bool terminar = false;
+//    for (int j = 0; j < matrizInicial.GetLength(1); j++)
+//    {
+//        if (i + matrizFigura3.GetLength(0) > matrizInicial.GetLength(0))
+//        {
+//            Console.WriteLine("No cabe la pieza a lo alto");
+//            return;
+//        }
+
+//        if (j + matrizFigura3.GetLength(1) > matrizInicial.GetLength(1))
+//        {
+//            Console.WriteLine("No cabe la pieza a lo ancho");
+//            return;
+//        }
+
+//        int sum = 0;
+
+//        for (int k = 0; k < matrizFigura3.GetLength(0); k++)
+//        {
+//            for(int l = 0; l < matrizFigura3.GetLength(1); l++)
+//            {
+//                if (matrizFigura3[k, l] != 0)
+//                {
+//                    sum += matrizInicial[i+k, j+l];
+//                }
+//            }
+//        }
+
+//        if (sum > 0)
+//        {
+//            continue;
+//        }
+
+//        for (int m = 0; m < matrizFigura3.GetLength(0); m++)
+//        {
+//            for (int n = 0; n < matrizFigura3.GetLength(1); n++)
+//            {
+//                if (matrizFigura3[m, n] != 0)
+//                {
+//                    matrizInicial[i+m, j+n] = 3;
+//                }
+//            }
+//        }
+
+//        terminar = true;
+
+//        break;
+//    }
+
+//    if (terminar)
+//    {
+//        break;
+//    }
+//}
+
+//for (int i = matrizInicial.GetLength(0) -1; i >= 0; i--)
+//{
+//    for (int j = matrizInicial.GetLength(1) -1; j >= 0; j--)
+//    {
+//        Console.Write(matrizInicial[i, j]);
+//    }
+
+//    Console.WriteLine();
+//}
+//Console.WriteLine("Fin Figura 3");
