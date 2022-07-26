@@ -1,5 +1,6 @@
 // Copyright 2022 Pablo Madrigal <PABLO.MADRIGALRAMIREZ@ucr.ac.cr>
 
+#include <mpi.h>
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,7 +42,7 @@ int review_space(figure_t *figure, char **temp,
  */
 
 void calculate_next_figure_recursive(input_data_t *input_data,
-                                     size_t current_profundity,
+                                     int current_profundity,
                                      size_t thread_count);
 
 bool set_figure(input_data_t *input_data, size_t current_profundity,
@@ -108,25 +109,49 @@ void next_play(input_data_t *input_data, size_t thread_count) {
  *
  */
 void calculate_next_figure_recursive(input_data_t *input_data,
-size_t current_profundity, size_t thread_count) {
+int current_profundity, size_t thread_count) {
     printf("\nSiguiente Figura [%c]\n",
            input_data->next_figures[current_profundity]);
 
-    // Obtener numero de rotaciones de la figura
-    int num_rotations =
-        get_tetris_figure_num_rotations
-        (input_data->next_figures[current_profundity]);
+        int rank = -1;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    printf("Rotaciones de la Figura [%c] : [%d]\n",
-           input_data->next_figures[current_profundity], num_rotations);
+        int processCount = -1;
+        MPI_Comm_size(MPI_COMM_WORLD, &processCount);
 
-    bool result = set_figure(input_data, current_profundity,
-                             num_rotations, thread_count);
+        char hostname[MPI_MAX_PROCESSOR_NAME];
+        int hostnameLength = -1;
+        MPI_Get_processor_name(hostname, &hostnameLength);
 
-    if (current_profundity < input_data->profundity && result == true) {
-        calculate_next_figure_recursive(input_data,
-                                        (current_profundity + 1), thread_count);
-    }
+        if (rank == 0) {
+            for (int target = 1; target < processCount; target++) {
+                MPI_Send(&current_profundity, 1, MPI_INT, target, 2,
+                MPI_COMM_WORLD);
+            }
+        } else {
+            const double startTime = MPI_Wtime();
+            MPI_Recv(&current_profundity, 1, MPI_INT, 0, 2,
+                MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            double elapsedTime = MPI_Wtime() - startTime;
+            printf("Proceso [%i]: tiempo [%f]\n", rank, elapsedTime);
+        }
+
+                    // Obtener numero de rotaciones de la figura
+            int num_rotations =
+                get_tetris_figure_num_rotations
+                (input_data->next_figures[current_profundity]);
+
+            printf("Rotaciones de la Figura [%c] : [%d]\n",
+                   input_data->next_figures[current_profundity], num_rotations);
+
+            bool result = set_figure(input_data, current_profundity,
+                                     num_rotations, thread_count);
+
+            if (current_profundity < (int)input_data->profundity
+                && result == true) {
+                calculate_next_figure_recursive(input_data,
+                (current_profundity + 1), thread_count);
+            }
 }
 
 /**
