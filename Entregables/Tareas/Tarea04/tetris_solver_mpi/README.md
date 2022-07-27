@@ -119,20 +119,63 @@ Por favor revisar folder de guide, ya que se encuentran screenshots de los pasos
     1. make
         1. Puede utilizar make con alguno de los siguientes sanitazers asan, msan, tsan, ubsan. Por ejemplo: make msan
 
+### Como utilizarla version Cluster Kabre
+
+        SSH
+
+        $ ssh [user]@kabre.cenat.ac.cr
+
+        Ejemplo: ssh curso-658@kabre.cenat.ac.cr
+        password: pLWYMXLn
+
+        -----------
+        Copying folder
+
+        $ scp -r ~/local_dir user@host.com:/target_dir
+
+
+        Ejemplo: scp -r tetris_solver_mpi curso-658@kabre.cenat.ac.cr:/home/curso-658/tetris_solver_mpi
+
+        ----------
+        Load modules
+
+        Ejemplos:
+
+        module load gcc/7.2.0
+
+        module load mpich/3.2.1-gcc
+
+        ----------
+        Run job
+
+        $ sbatch file.slurm
+        $ squeue -j <jobid>
+        $ watch -n 5 squeue
+
+        ---------
+        List all nodes
+
+        sinfo -a`
+
 ### Como utilizarla
 
 Por favor revisar folder de guide, ya que se encuentran screenshots de los pasos mencionados.
 
-1. Ejecutar el siguiente comando en la carpeta bin de la tarea (pablo-madrigal-concurrente-2022-I./Entregables/Tareas/Tarea02/tetris_solver_pthreads/bin)
+1. Ejecutar el siguiente comando en la carpeta bin de la tarea (pablo-madrigal-concurrente-2022-I./Entregables/Tareas/Tarea04/tetris_solver_mpi/bin)
     1. Puede utilizar el comando *cd bin* para llegar a la carpeta correspondiente desde el root de la tarea
-    1.  Comando en la carpeta bin: ./tetris_solver_pthreads
+    1.  Comando en la carpeta bin: mpiexec -np {# de procesos} ./tetris_solver_mpi
         1. Puede utilizar make con alguno de los siguientes sanitazers asan, msan, tsan, ubsan. Por ejemplo: make msan
-    1. Si no pone ningún parámetro al comando ./tetris_solver_pthreads, la tarea utilizará por defecto el siguiente archivo -> "../test/test01.txt"
+    1. Si no pone ningún parámetro al comando mpiexec -np {# de procesos} ./tetris_solver_mpi, la tarea utilizará por defecto el siguiente archivo -> "../test/test01.txt"
     1. Si requiere utilizar otro archivo de prueba realizar estos pasos:
         1. Coloque su archivo txt en la carpeta test
-        1. Ejecute en la consola el comando ./tetris_solver_pthreads "archivo txt" (recuerde estar en la carpeta bin, ya que el ejecutable se encuentra en esa carpeta)
-    1. Si requieres utilizar hilos, puedes utilizar el siguiente comando ./tetris_solver_pthreads "../test/test01.txt" {Cantidad de hilos}
+        1. Ejecute en la consola el comando mpiexec -np {# de procesos} ./tetris_solver_mpi "archivo txt" (recuerde estar en la carpeta bin, ya que el ejecutable se encuentra en esa carpeta)
+    1. Si requieres utilizar hilos, puedes utilizar el siguiente comando mpiexec -np {# de procesos} ./tetris_solver_mpi "../test/test01.txt" {Cantidad de hilos}
         1. Si no pone ningún parámetro al comando relacionado a hilos ./tetris_solver_pthreads, la tarea utilizará por defecto el valor sysconf(_SC_NPROCESSORS_ONLN);
+
+#### Por Ejemplo:
+
+`mpiexec -np 10 ./tetris_solver_mpi "../test/test01.txt" 9` donde 10 son los procesos y 9 los hilos a ejecutar.
+
 
 ### Resultado
 
