@@ -32,9 +32,13 @@ Flujo del archivo game_logic, este archivo contiene toda la logica relacionada c
 
 ![Diagrama Game Logic](game_logic.jpeg)
 
-Flujo del archivo game_logic, este archivo contiene toda la logica relacionada con el manejo del juego (colocar la pieza, realizar intentos, etc..)  con Pthreads
+Flujo del archivo game_logic, este archivo contiene toda la logica relacionada con el manejo del juego (colocar la pieza, realizar intentos, etc..)  con openMp
+![Diagrama Game Logic](tarea4.jpeg)
 
-![Diagrama Game Logic2](newDiagrama.jpeg)
+No se puede implementar de forma ideonea la tecnologia mpi y openMP por la arquitectura de esta solucion pero, se opta por colocarla de la siguiente manera:
+
+* MPI : se encarga de distribuir las figuras 
+* OPENMP: se encarga de manejar la concurrencia en el proceso de colocar la figura.
 
 
 Cabe mencionar que también se realizaron pruebas en otros lenguajes de programación por ejemplo C#, adjunto la lógica referente al colocar una figura en el tablero de juego.
@@ -58,6 +62,9 @@ Structs utilizados en la tarea
 Lluvia de ideas, de como se podria abarcar el problema y como se podria resolver con concurrencia
 
 ![Idea General del Proceso2](newIdeas.PNG)
+
+## Tarea 3
+![Diagrama Game Logic2](newDiagrama.jpeg)
 
 ## Diagrama UML
 
